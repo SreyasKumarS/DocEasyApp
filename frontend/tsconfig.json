@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "moduleResolution": "node",
+    "module": "esnext",
+    "jsx": "react",  // or "react-jsx"
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "typeRoots": ["./node_modules/@types", "./types"],
+  },
+  "include": ["src", "store.ts","types", "interfaces"],
+  "exclude": ["node_modules"]
+}
