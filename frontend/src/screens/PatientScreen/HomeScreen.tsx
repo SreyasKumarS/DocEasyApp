@@ -148,7 +148,7 @@ const HomeScreen: React.FC = () => {
      <div className="d-flex flex-column min-vh-100">
       <Container className="py-4 bg-light flex-grow-1">
         <div className="text-center mb-4">
-          <h1 className="text-primary">Welcome to DocEasy, {user?.name || 'Patient'}</h1>
+          <h1 className="text-primary">Hai Welcome to DocEasy, {user?.name || 'Patient'}</h1>
           <p className="text-secondary">Your health is our priority.</p>
         </div>
 
