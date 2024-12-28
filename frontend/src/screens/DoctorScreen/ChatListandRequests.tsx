@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import {PatientChatListAndRequestScreen} from '../../../interfaces/doctorInterfaces'
-
+const backend_URL= import.meta.env.VITE_BACKEND_URL
 
 const ChatList: React.FC = () => {
   const [patients, setPatients] = useState<PatientChatListAndRequestScreen[]>([]);
@@ -13,7 +13,7 @@ const ChatList: React.FC = () => {
   useEffect(() => {
     const fetchChatList = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/doctor/getChatList/${doctorId}`);
+        const response = await fetch(`${backend_URL}/api/doctor/getChatList/${doctorId}`);
         const data = await response.json();
         setPatients(data);
       } catch (error) {

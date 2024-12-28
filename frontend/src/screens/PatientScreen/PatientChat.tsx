@@ -3,7 +3,8 @@ import { io } from 'socket.io-client';
 import { useLocation } from 'react-router-dom';
 import {DoctorDetailsPatientChatScreen} from '../../../interfaces/patientInterfaces'
 import api from '../../axios';
-const socket = io('http://localhost:5000'); 
+const backend_URL= import.meta.env.VITE_BACKEND_URL
+const socket = io(`${backend_URL}`); 
 
 // Helper function to format timestamps
 const formatTime = (timestamp: string) => {
@@ -45,7 +46,7 @@ const ChatWithDoctor: React.FC = () => {
 
     const fetchChatHistory = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/patients/getChatHistory/${patientId}/${doctorId}`);
+        const response = await fetch(`${backend_URL}/api/patients/getChatHistory/${patientId}/${doctorId}`);
         const data = await response.json();
         setMessages(data);
       } catch (error) {

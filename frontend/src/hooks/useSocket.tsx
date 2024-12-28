@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
-
+const backend_URL= import.meta.env.VITE_BACKEND_URL
 const useSocket = () => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [notifications, setNotifications] = useState<any[]>([]);
@@ -15,7 +15,7 @@ const useSocket = () => {
 
   useEffect(() => {
     // Connect to the server (replace with your backend URL)
-    const socketIo = io('http://localhost:5000', {
+    const socketIo = io(`${backend_URL}`, {
       withCredentials: true, // If you are using cookies for authentication
       reconnection: true, // Enable reconnection
       reconnectionAttempts: 10, // Retry up to 10 times
@@ -27,7 +27,6 @@ const useSocket = () => {
 
     // Listen for the 'appointmentCanceled' event
     socketIo.on('appointmentCanceled', (data) => {
-      ('Received notification:', data);
       setNotifications((prevNotifications) => [...prevNotifications, data]);
     });
 

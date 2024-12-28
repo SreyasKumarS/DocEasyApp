@@ -5,7 +5,7 @@ import { useNavigate,Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { RootState } from '../../../store'; 
-import axios from 'axios';
+import api from '../../axios'
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -17,7 +17,7 @@ const Header = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post('http://localhost:5000/api/patients/logout', {}, {
+      await api.post('/patients/logout', {}, {
         withCredentials: true, 
       });
       dispatch(clearCredentials());

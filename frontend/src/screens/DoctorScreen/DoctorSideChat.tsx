@@ -3,8 +3,9 @@ import { useLocation } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import {PatientDetailsDoctorChatScreen } from '../../../interfaces/doctorInterfaces';
 import api from '../../axios';
+const backend_URL= import.meta.env.VITE_BACKEND_URL
 
-const socket = io('http://localhost:5000'); // Your backend URL for the Socket.IO server
+const socket = io(`${backend_URL}`); // Your backend URL for the Socket.IO server
 
 const formatTime = (timestamp: string) => {
   const date = new Date(timestamp);
@@ -48,7 +49,7 @@ const ChatPage: React.FC = () => {
 
     const fetchChatHistory = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/patients/getChatHistory/${patientId}/${doctorId}`);
+        const response = await fetch(`${backend_URL}/api/patients/getChatHistory/${patientId}/${doctorId}`);
         const data = await response.json();
         setMessages(data);
       } catch (error) {

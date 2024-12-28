@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import axios from 'axios';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
-
+import api from '../../axios'
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const DoctorsRevenueBarChart: React.FC = () => {
@@ -11,7 +11,7 @@ const DoctorsRevenueBarChart: React.FC = () => {
   useEffect(() => {
     const fetchChartData = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/admin/getDoctorsRevenueBarChart', { withCredentials: true });
+        const response = await api.get('/admin/getDoctorsRevenueBarChart', { withCredentials: true });
         setChartData(response.data);
       } catch (error) {
         console.error('Error fetching bar chart data:', error);

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Pie } from 'react-chartjs-2';
 import axios from 'axios';
 import 'chart.js/auto';
+import api from '../../axios'
 
 const RevenuePieChart = () => {
   const [chartData, setChartData] = useState({
@@ -32,7 +33,7 @@ const RevenuePieChart = () => {
 
   const fetchRevenueData = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/admin/getSpecializationsPieChart', { withCredentials: true });
+      const response = await api.get('/admin/getSpecializationsPieChart', { withCredentials: true });
       const { labels, data } = response.data;
 
       setChartData((prev) => ({
