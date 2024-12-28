@@ -4,6 +4,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from 'react-redux';
 import Header from './components/patientComponents/Header';
+import Footer from './components/patientComponents/footer'; 
 import Headerd from './components/doctorComponent/Header';
 import Headera from './components/adminComponent/Header';
 import './App.css';
@@ -41,7 +42,15 @@ const App: React.FC = () => {
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         {isAdminRoute ? <Headera /> : isDoctorRoute ? <Headerd /> : <Header />}
+        <div style={{ marginBottom: '90px' }}> {/* Adjust margin as needed */}
         <Outlet />
+        </div>
+
+ {/* Conditionally render Footer for Patient Route */}
+ {isPatientRoute && <Footer />} {/* Highlighted change: render footer on patient route */}
+
+
+
         
         {/* Keep ToastContainer for other functionalities */}
         <ToastContainer

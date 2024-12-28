@@ -388,7 +388,6 @@ import { BsFillBellFill } from 'react-icons/bs';
 import { Badge } from 'react-bootstrap';// Correct import
 import ReactStars from 'react-rating-stars-component';
 import {HomeScreenDoctor} from '../../../interfaces/patientInterfaces';
-import Footer from '../../components/patientComponents/footer'; 
 import {SpecializationScreen,SpecializationScreenDoctor} from '../../../interfaces/patientInterfaces'
 
 
@@ -810,10 +809,6 @@ const HomeScreen: React.FC = () => {
     )}
   </Row>
 </Container>
-
-
-
-      <Footer />
     </div>
     </>
   );
