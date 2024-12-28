@@ -125,7 +125,7 @@ class DoctorRepository {
                         location: 1,
                         distance: { $round: [{ $divide: ["$distance", 1000] }, 2] },
                         profilePicture: 1, // Include profile picture
-                        contactEmail: 1, // Include contact email
+                        contactNumber: 1, // Include contact email
                         experience: 1, // Include experience
                         clinicAddress: 1, // Include clinic address
                         locality: 1,

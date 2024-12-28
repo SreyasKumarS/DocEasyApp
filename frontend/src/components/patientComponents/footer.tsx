@@ -1,8 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-// import '@fortawesome/fontawesome-free/css/all.min.css';
-
+import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from 'react-icons/fa';
 
 const Footer = () => {
   return (
@@ -68,16 +67,16 @@ const Footer = () => {
             <div>
               <h6 style={{ fontWeight: '600', fontSize: '1.1rem', marginBottom: '10px' }}>Follow Us</h6>
               <a href="https://facebook.com" target="_blank" rel="noreferrer" className="text-white me-3 fs-5">
-                <i className="fab fa-facebook-f"></i>
+                <FaFacebookF />
               </a>
               <a href="https://twitter.com" target="_blank" rel="noreferrer" className="text-white me-3 fs-5">
-                <i className="fab fa-twitter"></i>
+                <FaTwitter />
               </a>
               <a href="https://instagram.com" target="_blank" rel="noreferrer" className="text-white me-3 fs-5">
-                <i className="fab fa-instagram"></i>
+                <FaInstagram />
               </a>
               <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="text-white fs-5">
-                <i className="fab fa-linkedin-in"></i>
+                <FaLinkedinIn />
               </a>
             </div>
           </div>
