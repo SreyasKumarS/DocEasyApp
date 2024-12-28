@@ -1,5 +1,3 @@
-// import { Response, Request, NextFunction } from 'express';
-// import AdminService from '../services/adminServices.js';
 import AdminService from '../services/adminServices.js';
 class AdminController {
     async verifyOtp(req, res, next) {
