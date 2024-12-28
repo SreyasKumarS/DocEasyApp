@@ -124,8 +124,8 @@ const RegisterScreen: React.FC = () => {
         const result = await api.post('/patients/googlelogin', { googleToken });
         dispatch(setCredentials(result.data)); 
         navigate('/patient/HomeScreen');
-      } catch (error) {
-        console.error('Google login failed:', error);
+      } catch (error:any) {
+        toast.error('Google login failed:', error);
       }
     }
   };

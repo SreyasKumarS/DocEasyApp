@@ -271,19 +271,12 @@ async googleLogin(googleToken: string, res: Response) {
     }
 
     const { email, name } = payload;
-
-    // Check if email is defined
     if (!email) {
       throw new Error('Email is required from Google token');
     }
-
-    // Check if name is defined and set a default if needed
     const userName = name || 'Unnamed User';
-
-    // Find or create the patient
     const patient = await PatientRepository.findOrCreatePatient(email, userName);
 
-    // Generate JWT token
     let accessToken;
     try {
       accessToken = generatePatientAccessToken(patient._id.toString(), "patient");
@@ -294,7 +287,6 @@ async googleLogin(googleToken: string, res: Response) {
       throw new Error("Could not generate tokens");
     }
 
-    // Return both the patient and token
     return { 
       patient: {
         id: patient._id.toString(),

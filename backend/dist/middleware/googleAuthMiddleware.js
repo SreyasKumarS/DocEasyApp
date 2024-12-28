@@ -17,6 +17,7 @@ export const verifyGoogleToken = async (token) => {
             audience: process.env.GOOGLE_CLIENT_ID, // Validate against correct CLIENT_ID
         });
         const payload = ticket.getPayload();
+        console.log(payload, 'gogllllllllllllllllllllllllllll');
         if (!payload) {
             throw new Error("Failed to extract payload from Google token");
         }
