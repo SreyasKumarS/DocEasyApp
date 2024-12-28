@@ -3,6 +3,7 @@ import AdminService from '../services/adminServices.js';
 
 class AdminController {
 
+  
   async verifyOtp(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
   const { email, otp } = req.body;
   try {
