@@ -9,45 +9,136 @@
 // const __filename = fileURLToPath(import.meta.url);
 // const __dirname = path.dirname(__filename);
 
-// interface MulterFiles {
-//   licenseFile?: Express.Multer.File[];
-//   idProof?: Express.Multer.File[];
-//   profilePicture?: Express.Multer.File[];
+// // interface MulterFiles {
+// //   licenseFile?: Express.Multer.File[];
+// //   idProof?: Express.Multer.File[];
+// //   profilePicture?: Express.Multer.File[];
+// // }
+
+
+
+// interface S3File extends Express.Multer.File {
+//   location: string; // S3 URL provided by multer-s3
 // }
 
-// const registerDoctor = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+// interface MulterS3Files {
+//   licenseFile?: S3File[];
+//   idProof?: S3File[];
+//   profilePicture?: S3File[];
+// }
+
+
+
+
+// class DoctorController {
+
+// // async registerDoctor(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
+// //   const {
+// //     name,
+// //     email,
+// //     password,
+// //     specialization,
+// //     licenseNumber,
+// //     contactNumber,   
+// //     experience,      
+// //     clinicAddress,
+// //     locality,   
+// //     biography,
+// //     consultationFee       
+// //   } = req.body;
+
+
+// // const files = req.files as MulterFiles;
+
+// //   const medicalLicense = files.licenseFile
+// //     ? `doctorFiles/${path.basename(files.licenseFile[0].path)}`
+// //     : null;
+// //   const idProof = files.idProof
+// //     ? `doctorFiles/${path.basename(files.idProof[0].path)}`
+// //     : null;
+// //   const profilePicture = files.profilePicture
+// //     ? `doctorFiles/${path.basename(files.profilePicture[0].path)}`
+// //     : null;
+
+// //   try {
+// //     if (!name || !email || !password || !specialization || !licenseNumber || !medicalLicense 
+// //       || !idProof || !profilePicture ||!contactNumber || !experience || !clinicAddress || !locality || !consultationFee ||
+// //         !biography) {
+// //       console.error('Missing required fields');
+// //       return res.status(400).json({ message: 'All fields are required' });
+// //     }
+
+// //     await DoctorService.registerDoctor(
+// //       name,
+// //       email,
+// //       password,
+// //       specialization,
+// //       licenseNumber,
+// //       medicalLicense,
+// //       contactNumber,
+// //       experience,
+// //       clinicAddress,
+// //       locality,
+// //       biography,
+// //       idProof,
+// //       profilePicture,
+// //       consultationFee  
+// //     );
+
+// //     return res.status(201).json({ message: 'OTP sent to your email' });
+// //   } catch (error) {
+// //     console.error('Error during registration:', error);
+// //     next(error);
+// //   }
+// // };
+
+
+
+
+// async registerDoctor(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
 //   const {
 //     name,
 //     email,
 //     password,
 //     specialization,
 //     licenseNumber,
-//     contactNumber,   
-//     experience,      
+//     contactNumber,
+//     experience,
 //     clinicAddress,
-//     locality,   
+//     locality,
 //     biography,
-//     consultationFee       
+//     consultationFee,
 //   } = req.body;
-  
-  
 
-// const files = req.files as MulterFiles;
+//   const files = req.files as MulterS3Files;
 
 //   const medicalLicense = files.licenseFile
-//     ? `doctorFiles/${path.basename(files.licenseFile[0].path)}`
+//     ? files.licenseFile[0].location // S3 URL provided by multer-s3
 //     : null;
 //   const idProof = files.idProof
-//     ? `doctorFiles/${path.basename(files.idProof[0].path)}`
+//     ? files.idProof[0].location // S3 URL provided by multer-s3
 //     : null;
 //   const profilePicture = files.profilePicture
-//     ? `doctorFiles/${path.basename(files.profilePicture[0].path)}`
+//     ? files.profilePicture[0].location // S3 URL provided by multer-s3
 //     : null;
 
 //   try {
-//     if (!name || !email || !password || !specialization || !licenseNumber || !medicalLicense 
-//       || !idProof || !profilePicture ||!contactNumber || !experience || !clinicAddress || !locality || !consultationFee ||
-//         !biography) {
+//     if (
+//       !name ||
+//       !email ||
+//       !password ||
+//       !specialization ||
+//       !licenseNumber ||
+//       !medicalLicense ||
+//       !idProof ||
+//       !profilePicture ||
+//       !contactNumber ||
+//       !experience ||
+//       !clinicAddress ||
+//       !locality ||
+//       !consultationFee ||
+//       !biography
+//     ) {
 //       console.error('Missing required fields');
 //       return res.status(400).json({ message: 'All fields are required' });
 //     }
@@ -66,7 +157,7 @@
 //       biography,
 //       idProof,
 //       profilePicture,
-//       consultationFee  
+//       consultationFee
 //     );
 
 //     return res.status(201).json({ message: 'OTP sent to your email' });
@@ -74,12 +165,18 @@
 //     console.error('Error during registration:', error);
 //     next(error);
 //   }
-// };
+// }
 
 
 
 
-// const verifyOtp = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+
+
+
+
+
+
+// async verifyOtp(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
   
 //   const { email, otp } = req.body;
 //   try {
@@ -92,7 +189,7 @@
 //   }
 // };
 
-// const resendOtp = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+//  async resendOtp (req: Request, res: Response, next: NextFunction): Promise<Response | void> {
 //   const { email } = req.body;
 //   try {
 //     await DoctorService.resendOtp(email);
@@ -102,7 +199,7 @@
 //   }
 // };
 
-// const loginDoctor = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+// async loginDoctor (req: Request, res: Response, next: NextFunction): Promise<Response | void>{
 //   const { email, password } = req.body;
 //   try {
 //     const result = await DoctorService.loginDoctor(email, password, res);
@@ -116,7 +213,7 @@
 //   }
 // };
 
-// const logoutDoctor = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+// async logoutDoctor (req: Request, res: Response, next: NextFunction): Promise<Response | void> {
 //   try {
 //     await DoctorService.logoutDoctor(res);
 //     return res.status(200).json({ message: 'Logout successful' });
@@ -125,7 +222,7 @@
 //   }
 // };
 
-// const sendDoctorResetOtp = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+// async sendDoctorResetOtp (req: Request, res: Response, next: NextFunction): Promise<Response | void> {
 //   const { email } = req.body;
 
 //   try {
@@ -144,7 +241,7 @@
 // };
 
 
-// const resetDoctorPassword = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+// async resetDoctorPassword (req: Request, res: Response, next: NextFunction): Promise<Response | void> {
 //   const { email, newPassword, confirmPassword } = req.body;
 //   if (newPassword !== confirmPassword) {
 //     return res.status(400).json({ message: 'Passwords do not match' });
@@ -159,7 +256,7 @@
 // };
 
 
-// const fetchDoctorProfile = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+// async  fetchDoctorProfile (req: Request, res: Response, next: NextFunction): Promise<Response | void>{
 //   try {
 //     const {doctorId }= req.params;
 //     if (!doctorId) {
@@ -176,7 +273,7 @@
 //   }
 // };
 
-// const updateDoctorProfile = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+//  async  updateDoctorProfile (req: Request, res: Response, next: NextFunction): Promise<Response | void> {
 //   try {
 //     const { doctorId } = req.params;
 //     const updateData = req.body;
@@ -190,7 +287,7 @@
 // };
 
 
-// const DailySlots = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+// async  DailySlots(req: Request, res: Response, next: NextFunction): Promise<Response | void>{
 //   try {
     
 //     const { doctorId } = req.params;
@@ -215,7 +312,7 @@
 
 
 // //-------------------------------------------------------------------------------------------------------
-// const createDoctorMonthlySlots = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+// async  createDoctorMonthlySlots (req: Request, res: Response, next: NextFunction): Promise<Response | void>{
 //   try {
 //     const { doctorId } = req.params;
 //     const { defaultMonthlyTime, excludedDates, specificDates, weeklyDays } = req.body;
@@ -241,7 +338,7 @@
 
 
 
-// const getDoctorSlotsM = async (req: Request, res: Response): Promise<void> => {
+// async getDoctorSlotsM (req: Request, res: Response): Promise<void> {
 //   const { doctorId } = req.params;
 
 //   try {
@@ -258,7 +355,7 @@
 
 
 
-// const deleteSlot = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+// async deleteSlot (req: Request, res: Response, next: NextFunction): Promise<Response | void>  {
 //   try {
 //       const { slotId } = req.params; 
 //       const deletedSlot = await DoctorService.deleteSlot(slotId);
@@ -273,7 +370,7 @@
 //   }
 // };
 
-// const AppointmentsOverView = async (req: Request, res: Response, next: NextFunction) => {
+// async AppointmentsOverView (req: Request, res: Response, next: NextFunction){
 //   try {
 //     const doctorId = req.params.doctorId;
 //     const { date } = req.query;
@@ -285,7 +382,7 @@
 // };
 
 
-// const getDoctorSlotsByDate = async (req: Request, res: Response, next: NextFunction) => {
+// async getDoctorSlotsByDate (req: Request, res: Response, next: NextFunction) {
 //   try {
 //     const doctorId = req.params.doctorId;
 //     const { date } = req.query;
@@ -294,57 +391,12 @@
 //   } catch (error) {
 //     next(error);
 //   }}
-// //-----------------------------------------------------------------------------------------------------------------
-
-
-// // const DailyRecurringSlots = async (req: Request, res: Response, next: NextFunction) => {
-  
-// //   try {
-// //     const {
-// //       doctorId,
-// //       startDate,
-// //       endDate,
-// //       startTime,
-// //       endTime,
-// //       duration,
-// //       breakStart,
-// //       breakEnd,
-// //       excludedDates
-// //     } = req.body;
-
-// //     // Validate required fields
-// //     if (!doctorId || !startDate || !endDate || !startTime || !endTime || !duration) {
-// //       return res.status(400).json({ message: "All required fields must be provided." });
-// //     }
-
-// //     // Create slots using the service
-// //     const slots = await DoctorService.DailyRecurringSlots(
-// //       doctorId,
-// //       startDate,
-// //       endDate,
-// //       startTime,
-// //       endTime,
-// //       duration,
-// //       breakStart,
-// //       breakEnd,
-// //       excludedDates
-// //     );
-
-// //     res.status(201).json({ message: "Slots created successfully.", slots });
-// //   } catch (error) {
-// //     console.error(error);
-// //     res.status(500).json({ message: "Server error. Please try again." });
-// //   }
-// // };
 
 
 
 
 
-
-
-
-// const DailyRecurringSlots = async (req: Request, res: Response, next: NextFunction) => {
+// async DailyRecurringSlots(req: Request, res: Response, next: NextFunction) {
 
   
 //   try {
@@ -393,7 +445,7 @@
 
 
 
-// const getPatientDetails = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+// async getPatientDetails(req: Request, res: Response, next: NextFunction) {
 
 
 //   const { slotId } = req.params;
@@ -420,7 +472,7 @@
 
 
 
-// const cancelAppointmentbydoctor = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+// async cancelAppointmentByDoctor(req: Request, res: Response, next: NextFunction) {
 
 
 //   const { slotId, patientId, doctorId, amount, reason } = req.body;
@@ -461,7 +513,7 @@
 
 
 
-// const addPrescription = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+// async addPrescription(req: Request, res: Response, next: NextFunction) {
 //   try {
 //     const { slotId, patientId, doctorId, diagnosis, medications, additionalNotes } = req.body;
 //     const prescription = {
@@ -484,7 +536,7 @@
 
 
 
-// const getCompletedBookings = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+// async getCompletedBookings(req: Request, res: Response, next: NextFunction) {
 //   try {
 
 //     const completedBookings = await  DoctorService.fetchCompletedBookings();
@@ -494,7 +546,9 @@
 //     next(error);
 //   }
 // };
-// const getPrescription = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+
+
+// async getPrescription(req: Request, res: Response, next: NextFunction) {
 //   try {
 
 //     const { bookingId } = req.params;
@@ -506,12 +560,7 @@
 // };
 
 
-
-
-
-// const getChatList =  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-
-  
+// async getChatList(req: Request, res: Response, next: NextFunction) {
 //   try {
 //     const {doctorId} = req.params; // Assuming doctor authentication is handled, and ID is in req.user
 //     const chatList = await DoctorService.getChatListByDoctor(doctorId);
@@ -526,7 +575,8 @@
 
 
 
-// const createWeeklyRecurringSlots = async (req: Request, res: Response): Promise<Response> => {
+// async createWeeklyRecurringSlots(req: Request, res: Response) {
+
 //   const { doctorId, startDate, endDate, daysConfig, excludedDates, slotDuration } = req.body;
 //   try {
 //     const slots = await DoctorService.createWeeklyRecurringSlots(
@@ -544,24 +594,25 @@
 // };
 
 
+// async fetchPatientDetailsforChat(req: Request, res: Response): Promise<Response | void>  {
+//   try {
+//     const { patientId } = req.params;
+//     const patientDetails = await DoctorService.fetchPatientDetailsforChat(patientId);
 
-
-// export { registerDoctor, verifyOtp, resendOtp, loginDoctor, 
-//   logoutDoctor,sendDoctorResetOtp,
-//   resetDoctorPassword,fetchDoctorProfile,
-//   updateDoctorProfile, 
-//   deleteSlot,AppointmentsOverView,getDoctorSlotsByDate,createDoctorMonthlySlots,DailySlots,
-//   getDoctorSlotsM,DailyRecurringSlots,getPatientDetails,cancelAppointmentbydoctor, addPrescription, 
-//   getCompletedBookings, getPrescription,getChatList,createWeeklyRecurringSlots
+//     return res.status(200).json({
+//       success: true,
+//       data: patientDetails,
+//     });
+//   } catch (error) {
+//     return res.status(500).json({
+//       success: false,
+//     });
+//   }
 // }
 
 
-
-
-
-
-
-
+// }
+// export default new DoctorController();
 
 
 
@@ -580,11 +631,10 @@
 
 
 import { Response, Request, NextFunction } from 'express';
-import DoctorService from '../services/doctorServices.js';
+import {DoctorService} from '../services/doctorServices.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import patientService from '../services/patientService.js';
-import doctorServices from '../services/doctorServices.js';
 import { io } from '../server.js'; 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -611,7 +661,15 @@ interface MulterS3Files {
 
 
 
-class DoctorController {
+export class DoctorController {
+
+
+    private DoctorService: DoctorService;
+  
+    constructor(doctorService: DoctorService) {
+      this.DoctorService= doctorService
+    }
+  
 
 // async registerDoctor(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
 //   const {
@@ -676,6 +734,7 @@ class DoctorController {
 
 
 
+
 async registerDoctor(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
   const {
     name,
@@ -724,7 +783,7 @@ async registerDoctor(req: Request, res: Response, next: NextFunction): Promise<R
       return res.status(400).json({ message: 'All fields are required' });
     }
 
-    await DoctorService.registerDoctor(
+    await this.DoctorService.registerDoctor(
       name,
       email,
       password,
@@ -761,7 +820,7 @@ async verifyOtp(req: Request, res: Response, next: NextFunction): Promise<Respon
   
   const { email, otp } = req.body;
   try {
-    await DoctorService.verifyOtp(email, otp);
+    await this.DoctorService.verifyOtp(email, otp);
     return res.status(201).json({ message: 'Doctor verified successfully' });
    
   } catch (error) {
@@ -773,7 +832,7 @@ async verifyOtp(req: Request, res: Response, next: NextFunction): Promise<Respon
  async resendOtp (req: Request, res: Response, next: NextFunction): Promise<Response | void> {
   const { email } = req.body;
   try {
-    await DoctorService.resendOtp(email);
+    await this.DoctorService.resendOtp(email);
     return res.status(200).json({ message: 'OTP resent to your email' });
   } catch (error) {
     next(error);
@@ -783,7 +842,7 @@ async verifyOtp(req: Request, res: Response, next: NextFunction): Promise<Respon
 async loginDoctor (req: Request, res: Response, next: NextFunction): Promise<Response | void>{
   const { email, password } = req.body;
   try {
-    const result = await DoctorService.loginDoctor(email, password, res);
+    const result = await this.DoctorService.loginDoctor(email, password, res);
     return res.status(200).json({
       message: 'Login successful',
       doctor: result.doctor,
@@ -796,7 +855,7 @@ async loginDoctor (req: Request, res: Response, next: NextFunction): Promise<Res
 
 async logoutDoctor (req: Request, res: Response, next: NextFunction): Promise<Response | void> {
   try {
-    await DoctorService.logoutDoctor(res);
+    await this.DoctorService.logoutDoctor(res);
     return res.status(200).json({ message: 'Logout successful' });
   } catch (error) {
     next(error);
@@ -807,7 +866,7 @@ async sendDoctorResetOtp (req: Request, res: Response, next: NextFunction): Prom
   const { email } = req.body;
 
   try {
-    await DoctorService.sendResetOtp(email); 
+    await this.DoctorService.sendResetOtp(email); 
     return res.status(200).json({ message: 'OTP sent to your email' });
   } catch (error) {
     console.error('Error in sendDoctorResetOtp controller:', error);
@@ -828,7 +887,7 @@ async resetDoctorPassword (req: Request, res: Response, next: NextFunction): Pro
     return res.status(400).json({ message: 'Passwords do not match' });
   }
   try {
-    await DoctorService.resetPassword(email, newPassword); 
+    await this.DoctorService.resetPassword(email, newPassword); 
     return res.status(200).json({ message: 'Password reset successful' });
   } catch (error) {
     console.error('Error resetting doctor password:', error);
@@ -843,7 +902,7 @@ async  fetchDoctorProfile (req: Request, res: Response, next: NextFunction): Pro
     if (!doctorId) {
       return res.status(400).json({ error: 'Doctor ID is required' });
     }
-    const doctor = await DoctorService.fetchDoctorById(doctorId);
+    const doctor = await this.DoctorService.fetchDoctorById(doctorId);
     if (!doctor) {
       return res.status(404).json({ error: 'Doctor not found' });
     }
@@ -859,7 +918,7 @@ async  fetchDoctorProfile (req: Request, res: Response, next: NextFunction): Pro
     const { doctorId } = req.params;
     const updateData = req.body;
 
-    const updatedDoctor = await DoctorService.updateDoctor(doctorId, updateData);
+    const updatedDoctor = await this.DoctorService.updateDoctor(doctorId, updateData);
     return res.status(200).json(updatedDoctor);
   } catch (error) {
     console.error('Error updating doctor profile:', error);
@@ -874,7 +933,7 @@ async  DailySlots(req: Request, res: Response, next: NextFunction): Promise<Resp
     const { doctorId } = req.params;
     const { date, startHour, endHour, slotDuration } = req.body;
 
-    const slots = await DoctorService.DailySlots(
+    const slots = await this.DoctorService.DailySlots(
       doctorId,
       date,
       startHour,
@@ -900,7 +959,7 @@ async  createDoctorMonthlySlots (req: Request, res: Response, next: NextFunction
 
    
 
-    const slots = await DoctorService.createDoctorMonthlySlots(doctorId, {
+    const slots = await this.DoctorService.createDoctorMonthlySlots(doctorId, {
       defaultMonthlyTime,
       excludedDates: excludedDates || [],
       specificDates: specificDates || [],
@@ -924,7 +983,7 @@ async getDoctorSlotsM (req: Request, res: Response): Promise<void> {
 
   try {
     // Fetch all slots for the specified doctor
-    const slots = await DoctorService.getDoctorSlotsM(doctorId);
+    const slots = await this.DoctorService.getDoctorSlotsM(doctorId);
     res.status(200).json(slots);
   } catch (error) {
     console.error('Error in getDoctorSlots controller:', error);
@@ -939,7 +998,7 @@ async getDoctorSlotsM (req: Request, res: Response): Promise<void> {
 async deleteSlot (req: Request, res: Response, next: NextFunction): Promise<Response | void>  {
   try {
       const { slotId } = req.params; 
-      const deletedSlot = await DoctorService.deleteSlot(slotId);
+      const deletedSlot = await this.DoctorService.deleteSlot(slotId);
 
       return res.status(200).json({
           message: 'Slot deleted successfully',
@@ -955,7 +1014,7 @@ async AppointmentsOverView (req: Request, res: Response, next: NextFunction){
   try {
     const doctorId = req.params.doctorId;
     const { date } = req.query;
-    const slots = await DoctorService.AppointmentsOverView(doctorId, date as string);
+    const slots = await this.DoctorService.AppointmentsOverView(doctorId, date as string);
     res.status(200).json(slots);
   } catch (error) {
     next(error);
@@ -967,7 +1026,7 @@ async getDoctorSlotsByDate (req: Request, res: Response, next: NextFunction) {
   try {
     const doctorId = req.params.doctorId;
     const { date } = req.query;
-    const slots = await DoctorService.getDoctorSlotsByDate(doctorId, date as string);
+    const slots = await this.DoctorService.getDoctorSlotsByDate(doctorId, date as string);
     res.status(200).json(slots);
   } catch (error) {
     next(error);
@@ -1003,7 +1062,7 @@ async DailyRecurringSlots(req: Request, res: Response, next: NextFunction) {
     const [endHours, endMinutes] = endTime.split(":").map(Number);
 
     // Create slots using the service
-    const slots = await DoctorService.DailyRecurringSlots(
+    const slots = await this.DoctorService.DailyRecurringSlots(
       doctorId,
       startDate,
       endDate,
@@ -1037,7 +1096,7 @@ async getPatientDetails(req: Request, res: Response, next: NextFunction) {
       return res.status(400).json({ message: 'Slot ID is required' });
     }
 
-    const patientDetails = await DoctorService.getPatientDetailsBySlotId(slotId);
+    const patientDetails = await this.DoctorService.getPatientDetailsBySlotId(slotId);
 
     if (!patientDetails) {
   
@@ -1059,11 +1118,11 @@ async cancelAppointmentByDoctor(req: Request, res: Response, next: NextFunction)
   const { slotId, patientId, doctorId, amount, reason } = req.body;
 
   try {
-    const startTime=await DoctorService.startime(slotId)
+    const startTime=await this.DoctorService.startime(slotId)
     
-    const result = await DoctorService.cancelAndRefundByDoctor(slotId, patientId, amount, startTime, reason);
+    const result = await this.DoctorService.cancelAndRefundByDoctor(slotId, patientId, amount, startTime, reason);
 
-    await DoctorService.createNotification({
+    await this.DoctorService.createNotification({
       patientId,
       doctorId,
       type: 'appointment',
@@ -1103,7 +1162,7 @@ async addPrescription(req: Request, res: Response, next: NextFunction) {
       additionalNotes,
     };
 
-    const result = await DoctorService.addPrescription({ slotId, patientId, doctorId, prescription });
+    const result = await this.DoctorService.addPrescription({ slotId, patientId, doctorId, prescription });
    
     res.status(200).json({
       message: 'Prescription added successfully.',
@@ -1120,7 +1179,7 @@ async addPrescription(req: Request, res: Response, next: NextFunction) {
 async getCompletedBookings(req: Request, res: Response, next: NextFunction) {
   try {
 
-    const completedBookings = await  DoctorService.fetchCompletedBookings();
+    const completedBookings = await  this.DoctorService.fetchCompletedBookings();
     
     res.status(200).json(completedBookings);
   } catch (error) {
@@ -1133,7 +1192,7 @@ async getPrescription(req: Request, res: Response, next: NextFunction) {
   try {
 
     const { bookingId } = req.params;
-    const prescription = await  DoctorService.fetchPrescription(bookingId);
+    const prescription = await  this.DoctorService.fetchPrescription(bookingId);
     res.status(200).json(prescription);
   } catch (error) {
     next(error);
@@ -1144,7 +1203,7 @@ async getPrescription(req: Request, res: Response, next: NextFunction) {
 async getChatList(req: Request, res: Response, next: NextFunction) {
   try {
     const {doctorId} = req.params; // Assuming doctor authentication is handled, and ID is in req.user
-    const chatList = await DoctorService.getChatListByDoctor(doctorId);
+    const chatList = await this.DoctorService.getChatListByDoctor(doctorId);
     res.status(200).json(chatList);
   } catch (error) {
     console.error('Error fetching chat list:', error);
@@ -1160,7 +1219,7 @@ async createWeeklyRecurringSlots(req: Request, res: Response) {
 
   const { doctorId, startDate, endDate, daysConfig, excludedDates, slotDuration } = req.body;
   try {
-    const slots = await DoctorService.createWeeklyRecurringSlots(
+    const slots = await this.DoctorService.createWeeklyRecurringSlots(
       doctorId,
       new Date(startDate),
       new Date(endDate),
@@ -1178,7 +1237,7 @@ async createWeeklyRecurringSlots(req: Request, res: Response) {
 async fetchPatientDetailsforChat(req: Request, res: Response): Promise<Response | void>  {
   try {
     const { patientId } = req.params;
-    const patientDetails = await DoctorService.fetchPatientDetailsforChat(patientId);
+    const patientDetails = await this.DoctorService.fetchPatientDetailsforChat(patientId);
 
     return res.status(200).json({
       success: true,
@@ -1193,4 +1252,6 @@ async fetchPatientDetailsforChat(req: Request, res: Response): Promise<Response 
 
 
 }
-export default new DoctorController();
+
+
+// export default new DoctorController();

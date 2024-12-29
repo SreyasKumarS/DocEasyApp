@@ -85,9 +85,13 @@
 import { Router } from 'express';
 import  { multerDoctor } from '../config/multer.js'
 import authenticateUser from '../middleware/authMiddleware.js'
-import doctorControllers from '../controllers/doctorControllers.js';
+import { DoctorController } from '../controllers/doctorControllers.js';
+import { DoctorService } from '../services/doctorServices.js';
+import { DoctorRepository } from '../repositories/doctorRespository.js';
 
-
+const doctorRepository = new  DoctorRepository();
+const doctorService = new DoctorService(doctorRepository)
+const doctorControllers = new DoctorController(doctorService);
 
 const router = Router();
 
@@ -104,30 +108,30 @@ router.post('/register', (req, res, next) => {
 });
 
 
-router.post('/verify-otpDoctor',doctorControllers.verifyOtp);
-router.post('/resend-otp', doctorControllers.resendOtp);
-router.post('/loginDoctor',doctorControllers.loginDoctor);
-router.post('/logout', doctorControllers.logoutDoctor);
-router.post('/sendResetDoctorOtp', doctorControllers.sendDoctorResetOtp);
-router.post('/resetDoctorPassword', doctorControllers.resetDoctorPassword );
+router.post('/verify-otpDoctor',doctorControllers.verifyOtp.bind(doctorControllers));
+router.post('/resend-otp', doctorControllers.resendOtp.bind(doctorControllers));
+router.post('/loginDoctor',doctorControllers.loginDoctor.bind(doctorControllers));
+router.post('/logout', doctorControllers.logoutDoctor.bind(doctorControllers));
+router.post('/sendResetDoctorOtp', doctorControllers.sendDoctorResetOtp.bind(doctorControllers));
+router.post('/resetDoctorPassword', doctorControllers.resetDoctorPassword.bind(doctorControllers));
 
-router.get('/fetchDoctorById/:doctorId',authenticateUser,doctorControllers.fetchDoctorProfile);
-router.put('/updateDoctorProfile/:doctorId',authenticateUser, doctorControllers.updateDoctorProfile);
-router.post('/DailySlots/:doctorId',authenticateUser, doctorControllers.DailySlots);
-router.post('/DailyRecurringSlots',authenticateUser, doctorControllers.DailyRecurringSlots);
-router.post('/createDoctorMonthlySlots/:doctorId',authenticateUser,doctorControllers.createDoctorMonthlySlots);
+router.get('/fetchDoctorById/:doctorId',authenticateUser,doctorControllers.fetchDoctorProfile.bind(doctorControllers));
+router.put('/updateDoctorProfile/:doctorId',authenticateUser, doctorControllers.updateDoctorProfile.bind(doctorControllers));
+router.post('/DailySlots/:doctorId',authenticateUser, doctorControllers.DailySlots.bind(doctorControllers));
+router.post('/DailyRecurringSlots',authenticateUser, doctorControllers.DailyRecurringSlots.bind(doctorControllers));
+router.post('/createDoctorMonthlySlots/:doctorId',authenticateUser,doctorControllers.createDoctorMonthlySlots.bind(doctorControllers));
 // router.get('/getDoctorSlots/:doctorId', getDoctorSlots);
-router.get('/getDoctorSlotsM/:doctorId',authenticateUser, doctorControllers.getDoctorSlotsM);
-router.delete('/deleteSlot/:slotId',authenticateUser, doctorControllers.deleteSlot  );
-router.get('/AppointmentsOverView/:doctorId',authenticateUser, doctorControllers.AppointmentsOverView);
-router.get('/getDoctorSlotsByDate/:doctorId',authenticateUser, doctorControllers.getDoctorSlotsByDate);
-router.get('/getPatientDetails/:slotId',authenticateUser, doctorControllers.getPatientDetails);
-router.put('/cancelAppointmentbydoctor',authenticateUser, doctorControllers.cancelAppointmentByDoctor);
-router.post('/addPrescription',authenticateUser, doctorControllers.addPrescription);
-router.get('/getCompletedBookings',authenticateUser, doctorControllers.getCompletedBookings);
-router.get('/getPrescription/:bookingId',authenticateUser, doctorControllers.getPrescription);
-router.get('/getChatList/:doctorId',doctorControllers.getChatList);
-router.post('/createWeeklyRecurringSlots',authenticateUser, doctorControllers.createWeeklyRecurringSlots);
-router.get('/fetchPatientDetails/:patientId', doctorControllers.fetchPatientDetailsforChat);
+router.get('/getDoctorSlotsM/:doctorId',authenticateUser, doctorControllers.getDoctorSlotsM.bind(doctorControllers));
+router.delete('/deleteSlot/:slotId',authenticateUser, doctorControllers.deleteSlot.bind(doctorControllers));
+router.get('/AppointmentsOverView/:doctorId',authenticateUser, doctorControllers.AppointmentsOverView.bind(doctorControllers));
+router.get('/getDoctorSlotsByDate/:doctorId',authenticateUser, doctorControllers.getDoctorSlotsByDate.bind(doctorControllers));
+router.get('/getPatientDetails/:slotId',authenticateUser, doctorControllers.getPatientDetails.bind(doctorControllers));
+router.put('/cancelAppointmentbydoctor',authenticateUser, doctorControllers.cancelAppointmentByDoctor.bind(doctorControllers));
+router.post('/addPrescription',authenticateUser, doctorControllers.addPrescription.bind(doctorControllers));
+router.get('/getCompletedBookings',authenticateUser, doctorControllers.getCompletedBookings.bind(doctorControllers));
+router.get('/getPrescription/:bookingId',authenticateUser, doctorControllers.getPrescription.bind(doctorControllers));
+router.get('/getChatList/:doctorId',doctorControllers.getChatList.bind(doctorControllers));
+router.post('/createWeeklyRecurringSlots',authenticateUser, doctorControllers.createWeeklyRecurringSlots.bind(doctorControllers));
+router.get('/fetchPatientDetails/:patientId', doctorControllers.fetchPatientDetailsforChat.bind(doctorControllers));
 
 export default router;
