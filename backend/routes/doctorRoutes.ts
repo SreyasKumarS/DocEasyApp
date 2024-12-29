@@ -103,7 +103,7 @@ router.post('/register', (req, res, next) => {
       return res.status(400).json({ message: err.message });
     }
     ('Multer processing done, proceeding to registerDoctor');
-    doctorControllers.registerDoctor(req, res, next);
+    doctorControllers.registerDoctor(req, res, next)
   });
 });
 

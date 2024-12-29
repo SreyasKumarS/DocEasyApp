@@ -634,7 +634,6 @@ import { Response, Request, NextFunction } from 'express';
 import {DoctorService} from '../services/doctorServices.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import patientService from '../services/patientService.js';
 import { io } from '../server.js'; 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -1254,4 +1253,3 @@ async fetchPatientDetailsforChat(req: Request, res: Response): Promise<Response 
 }
 
 
-// export default new DoctorController();

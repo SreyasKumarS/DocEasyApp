@@ -666,22 +666,30 @@
 
 
 import { Response, Request, NextFunction } from 'express';
-import PatientService from '../services/patientService.js';
+import {PatientService} from '../services/patientService.js';
 import mongoose from 'mongoose';
-import patientService from '../services/patientService.js';
 import {patientControllerNotification} from '../interfaces/patientBackendInterfaces.js'
 
 
 
 
-class PatientController{
+export class PatientController{
+
+
+    private PatientService: PatientService;
+  
+    constructor(patientService: PatientService) {
+      this.PatientService= patientService
+    }
+  
+
 
   async registerPatient(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
   
   const { name, email, password, age, gender, address,locality, contactNumber, bloodGroup } = req.body;
 
   try {
-    await PatientService.registerPatient(name, email, password, age, gender, address,locality, contactNumber, bloodGroup);
+    await this.PatientService.registerPatient(name, email, password, age, gender, address,locality, contactNumber, bloodGroup);
     return res.status(201).json({ message: 'OTP sent to your email' });
   } catch (error) {
     next(error);
@@ -693,7 +701,7 @@ async verifyOtp(req: Request, res: Response, next: NextFunction): Promise<Respon
   const { email, otp } = req.body;
 
   try {
-    await PatientService.verifyOtp(email, otp);
+    await this.PatientService.verifyOtp(email, otp);
     return res.status(201).json({ message: 'Patient verified successfully' });
   } catch (error) {
     next(error);
@@ -705,7 +713,7 @@ async resendOtp(req: Request, res: Response, next: NextFunction): Promise<Respon
   const { email } = req.body;
 
   try {
-    await PatientService.resendOtp(email);
+    await this.PatientService.resendOtp(email);
     return res.status(200).json({ message: 'OTP resent to your email' });
   } catch (error) {
     next(error);
@@ -717,7 +725,7 @@ async loginPatient(req: Request, res: Response, next: NextFunction): Promise<Res
   const { email, password } = req.body;
 
   try {
-      const result = await PatientService.loginPatient(email, password, res);
+      const result = await this.PatientService.loginPatient(email, password, res);
       return res.status(200).json({
           message: 'Login successful',
           patient: result.patient,
@@ -735,7 +743,7 @@ async googleLogin(req: Request, res: Response, next: NextFunction): Promise<Resp
 
   try {
     // Pass the 'res' object to the PatientService.googleLogin method
-    const result = await PatientService.googleLogin(googleToken, res);
+    const result = await this.PatientService.googleLogin(googleToken, res);
     
     return res.status(200).json({
       message: 'Google login successful',
@@ -754,7 +762,7 @@ async googleLogin(req: Request, res: Response, next: NextFunction): Promise<Resp
 // Logout Patient
 async logoutPatient(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
   try {
-    await PatientService.logoutPatient(res);  
+    await this.PatientService.logoutPatient(res);  
     return res.status(200).json({ message: 'Logout successful' });  
   } catch (error) {
     next(error);
@@ -766,7 +774,7 @@ async sendResetOtp(req: Request, res: Response, next: NextFunction): Promise<Res
   const { email } = req.body;
 
   try {
-    await PatientService.sendResetOtp(email);
+    await this.PatientService.sendResetOtp(email);
     return res.status(200).json({ message: 'OTP sent to your email' });
   } catch (error) {
     console.error('Error in resendOtp controller:', error); 
@@ -789,7 +797,7 @@ async resetPassword(req: Request, res: Response, next: NextFunction): Promise<Re
   }
 
   try {
-    await PatientService.resetPassword(email, newPassword);
+    await this.PatientService.resetPassword(email, newPassword);
     return res.status(200).json({ message: 'Password reset successful' });
   } catch (error) {
     console.error('Error resetting password:', error);
@@ -802,7 +810,7 @@ async resetPassword(req: Request, res: Response, next: NextFunction): Promise<Re
 async getPatientDetails(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
   const { patientId } = req.params; 
   try {
-    const patientDetails = await PatientService.getPatientDetails(patientId);
+    const patientDetails = await this.PatientService.getPatientDetails(patientId);
 
     if (!patientDetails) {
       return res.status(404).json({ message: 'Patient not found' });
@@ -819,7 +827,7 @@ async getPatientDetails(req: Request, res: Response, next: NextFunction): Promis
     const updatedData = req.body;
   
     try {
-      const updatedPatient = await PatientService.PatientProfileEdit(patientId, updatedData);
+      const updatedPatient = await this.PatientService.PatientProfileEdit(patientId, updatedData);
       return res.status(200).json(updatedPatient);
     } catch (error) {
       next(error);
@@ -830,7 +838,7 @@ async getPatientDetails(req: Request, res: Response, next: NextFunction): Promis
 
   async getSpecializations(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     try {
-      const specializations = await PatientService.getSpecializations();
+      const specializations = await this.PatientService.getSpecializations();
       return res.status(200).json({ specializations });
     } catch (error) {
       console.error('Error fetching specializations:', error);
@@ -843,7 +851,7 @@ async getPatientDetails(req: Request, res: Response, next: NextFunction): Promis
   async getDoctorsBySpecialization(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     const { specialization } = req.params;
     try {
-      const doctors = await PatientService.getDoctorsBySpecialization(specialization);
+      const doctors = await this.PatientService.getDoctorsBySpecialization(specialization);
       return res.status(200).json({ doctors });
     } catch (error) {
       console.error('Error fetching doctors:', error);
@@ -860,7 +868,7 @@ async getPatientDetails(req: Request, res: Response, next: NextFunction): Promis
     }
 
     try {
-      const slots = await PatientService.fetchSlots(doctorId as string, date as string);
+      const slots = await this.PatientService.fetchSlots(doctorId as string, date as string);
       
       return res.status(200).json({ slots });
     } catch (error) {
@@ -876,7 +884,7 @@ async getPatientDetails(req: Request, res: Response, next: NextFunction): Promis
     const radius = parseFloat(req.query.radius as string) || 100; 
   
     try {
-      const doctors = await PatientService.getNearbyDoctors(patientId, radius);
+      const doctors = await this.PatientService.getNearbyDoctors(patientId, radius);
       return res.status(200).json({ success: true, doctors });
       
       
@@ -896,7 +904,7 @@ async getPatientDetails(req: Request, res: Response, next: NextFunction): Promis
     const { search, specialization, locality, page = 1, limit = 10 } = req.query;
   
     try {
-      const result = await PatientService.searchDoctors(
+      const result = await this.PatientService.searchDoctors(
         search as string,
         specialization as string,
         locality as string,
@@ -920,7 +928,7 @@ async getPatientDetails(req: Request, res: Response, next: NextFunction): Promis
     const { slotId, amount } = req.body;
   
     try {
-      const order = await PatientService.createOrder(slotId, amount);
+      const order = await this.PatientService.createOrder(slotId, amount);
    
       return res.status(201).json({ success: true, orderId: order.id, amount: order.amount });
     } catch (error) {
@@ -935,7 +943,7 @@ async getPatientDetails(req: Request, res: Response, next: NextFunction): Promis
     const { paymentId, orderId, slotId, doctorId, patientId,totalAmount,adminFee,consultationFee } = req.body;
  
     try {
-      await PatientService.handlePaymentSuccess(paymentId, orderId, slotId, doctorId, patientId,
+      await this.PatientService.handlePaymentSuccess(paymentId, orderId, slotId, doctorId, patientId,
         totalAmount,adminFee,consultationFee);
       return res.status(200).json({ success: true, message: 'Payment successful, booking confirmed!' });
     } catch (error) {
@@ -951,7 +959,7 @@ async getPatientDetails(req: Request, res: Response, next: NextFunction): Promis
     const { patientId } = req.params;
   
     try {
-      const bookings = await PatientService.getPatientBookings(patientId);
+      const bookings = await this.PatientService.getPatientBookings(patientId);
       return res.status(200).json({ appointments: bookings });
     } catch (error) {
       next(error);
@@ -964,7 +972,7 @@ async getPatientDetails(req: Request, res: Response, next: NextFunction): Promis
  
     try {
       // Call service to handle the cancellation and refund
-      const result = await PatientService.cancelAndRefund(slotId, patientId, amount, startTime);
+      const result = await this.PatientService.cancelAndRefund(slotId, patientId, amount, startTime);
       return res.status(200).json(result);
     } catch (error) {
       console.error('Error cancelling appointment and processing refund:', error);
@@ -986,7 +994,7 @@ async getPatientDetails(req: Request, res: Response, next: NextFunction): Promis
   
     try {
       // Call the service to create the Razorpay order
-      const order = await PatientService.createWalletRechargeOrder(patientId, amount);
+      const order = await this.PatientService.createWalletRechargeOrder(patientId, amount);
   
       return res.status(201).json({
         success: true,
@@ -1007,7 +1015,7 @@ async getPatientDetails(req: Request, res: Response, next: NextFunction): Promis
     
   
     try {
-      const wallet = await PatientService.rechargeWallet(patientId, amount);
+      const wallet = await this.PatientService.rechargeWallet(patientId, amount);
       return res.status(200).json({ message: 'Wallet recharged successfully.', wallet });
     } catch (error) {
       console.error('Error recharging wallet:', error);
@@ -1024,7 +1032,7 @@ async getPatientDetails(req: Request, res: Response, next: NextFunction): Promis
     const limit = parseInt(req.query.limit as string) || 15;
   
     try {
-      const data = await PatientService.getWalletDetails(patientId, page, limit);
+      const data = await this.PatientService.getWalletDetails(patientId, page, limit);
       return res.status(200).json(data);
     } catch (error) {
       console.error('Error fetching wallet details:', error);
@@ -1036,7 +1044,7 @@ async getPatientDetails(req: Request, res: Response, next: NextFunction): Promis
  async getPlatformFee  (req: Request, res: Response, next: NextFunction): Promise<Response | void> {
   
     try {
-      const platformFee = await PatientService.fetchPlatformFee();
+      const platformFee = await this.PatientService.fetchPlatformFee();
       if (!platformFee) {
         return res.status(404).json({ message: 'Platform fee configuration not found' });
       }
@@ -1049,7 +1057,7 @@ async getPatientDetails(req: Request, res: Response, next: NextFunction): Promis
  async  getConsultationFee (req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     try {
       const { doctorId } = req.params; // Extract doctorId from request parameters
-      const consultationFee = await  PatientService.fetchConsultationFee(doctorId);
+      const consultationFee = await  this.PatientService.fetchConsultationFee(doctorId);
   
       if (!consultationFee) {
         return res.status(404).json({ message: 'Consultation fee not found for this doctor' });
@@ -1069,7 +1077,7 @@ async getPatientDetails(req: Request, res: Response, next: NextFunction): Promis
     const { patientId, slotId, doctorId, totalAmount,adminFee,consultationFee } = req.body;
   
     try {
-      await PatientService.handleWalletPaymentSuccess(patientId, slotId, doctorId, totalAmount,adminFee,consultationFee);
+      await this.PatientService.handleWalletPaymentSuccess(patientId, slotId, doctorId, totalAmount,adminFee,consultationFee);
       return res.status(200).json({ success: true, message: 'Payment successful, booking confirmed!' });
     } catch (error) {
       console.error('Error confirming wallet payment:', error);
@@ -1086,7 +1094,7 @@ async getPatientDetails(req: Request, res: Response, next: NextFunction): Promis
         return res.status(400).json({ error: 'Patient ID is required' });
       }
       
-      const notifications: patientControllerNotification[] = await PatientService.getNotificationsByPatientId(patientId as string);
+      const notifications: patientControllerNotification[] = await this.PatientService.getNotificationsByPatientId(patientId as string);
       const unreadCount = notifications.filter(notification => notification.status === 'unread').length;
       res.status(200).json({ notifications, unreadCount });
     } catch (error) {
@@ -1100,7 +1108,7 @@ async getPatientDetails(req: Request, res: Response, next: NextFunction): Promis
     try {
       const { id } = req.params;
       const { status } = req.body;
-      const updatedNotification = await PatientService.updateNotificationReadStatus(id, status);
+      const updatedNotification = await this.PatientService.updateNotificationReadStatus(id, status);
       res.status(200).json(updatedNotification);
     } catch (error) {
       res.status(500).json({ error: 'Failed to update notification status' });
@@ -1113,7 +1121,7 @@ async getPatientDetails(req: Request, res: Response, next: NextFunction): Promis
  async  getDoctorDetailsForPatient(req: Request, res: Response) {
       try {
         const { doctorId } = req.params;
-        const doctor = await PatientService.getDoctorDetailsForPatient(doctorId);
+        const doctor = await this.PatientService.getDoctorDetailsForPatient(doctorId);
   
         if (!doctor) {
           return res.status(404).json({ message: 'Doctor not found' });
@@ -1134,7 +1142,7 @@ async getReviews(req: Request, res: Response){
   const doctorId = req.params.doctorId;
 
   try {
-    const reviews = await PatientService.getReviewsByDoctor(doctorId);
+    const reviews = await this.PatientService.getReviewsByDoctor(doctorId);
     res.status(200).json(reviews);
   } catch (error) {
     console.error('Error fetching reviews:', error);
@@ -1149,13 +1157,13 @@ async  submitReview(req: Request, res: Response){
 
   try {
     // Check if the doctor exists
-    const doctorExists = await PatientService.getReviewsByDoctor(doctorId);
+    const doctorExists = await this.PatientService.getReviewsByDoctor(doctorId);
     if (!doctorExists) {
       return res.status(404).json({ message: 'Doctor not found' });
     }
 
     // Create and save the review
-    const newReview = await PatientService.submitReview(doctorId, patientName, comment, rating);
+    const newReview = await this.PatientService.submitReview(doctorId, patientName, comment, rating);
     res.status(201).json(newReview);
   } catch (error) {
     console.error('Error submitting review:', error);
@@ -1176,7 +1184,7 @@ async getDoctorAverageRating(req: Request, res: Response): Promise<void> {
       return;
     }
 
-    const averageRating = await PatientService.getDoctorAverageRating(objectId);
+    const averageRating = await this.PatientService.getDoctorAverageRating(objectId);
     
 
     if (averageRating !== null) {
@@ -1200,7 +1208,7 @@ async  getDoctorAverageRatingformultipleDoctors (req: Request, res: Response): P
       res.status(400).json({ message: 'Doctor IDs are required' });
       return;
     }
-    const averageRatings = await PatientService.getDoctorAverageRatingformultipleDoctors(doctorIds);
+    const averageRatings = await this.PatientService.getDoctorAverageRatingformultipleDoctors(doctorIds);
     res.status(200).json({ averageRatings });
   } catch (error) {
     console.error('Error fetching average rating:', error);
@@ -1216,7 +1224,7 @@ async  getBookingDetailsforSuccessPage(req: Request, res: Response, next: NextFu
 
   try {
     const { slotId } = req.params; // Extract slotId from request params
-    const bookingDetails = await patientService.getBookingDetailsforSuccessPage(slotId);
+    const bookingDetails = await this.PatientService.getBookingDetailsforSuccessPage(slotId);
 
     if (!bookingDetails) {
       return res.status(404).json({ message: 'Booking not found' });
@@ -1239,7 +1247,7 @@ async  getAppointmentHistory (req: Request, res: Response, next: NextFunction): 
   }
 
   try {
-    const appointmentHistory = await patientService.getAppointmentHistoryForPatient(patientId);
+    const appointmentHistory = await this.PatientService.getAppointmentHistoryForPatient(patientId);
     res.status(200).json({ success: true, data: appointmentHistory });
   } catch (error) {
     console.error('Error fetching appointment history:', error);
@@ -1256,7 +1264,7 @@ async  sendMessage(data: { patientId: string, doctorId: string, message: string,
   const { patientId, doctorId, message, sender } = data;
 
   try {
-    const newMessage = await patientService.sendMessage(patientId, doctorId, message, sender);
+    const newMessage = await this.PatientService.sendMessage(patientId, doctorId, message, sender);
     
     return newMessage;
   } catch (err) {
@@ -1270,7 +1278,7 @@ async getChatHistory (req: Request, res: Response): Promise<Response | void>  {
   const { patientId, doctorId } = req.params;
 
   try {
-    const chatHistory = await patientService.getChatHistory(patientId, doctorId);
+    const chatHistory = await this.PatientService.getChatHistory(patientId, doctorId);
     return res.status(200).json(chatHistory);
   } catch (err) {
     console.error('Error fetching chat history:', err);
@@ -1284,7 +1292,7 @@ async getChatHistory (req: Request, res: Response): Promise<Response | void>  {
 async fetchDoctorDetailsforChat (req: Request, res: Response): Promise<Response | void>  {
   try {
     const { doctorId } = req.params;
-    const doctorDetails = await PatientService.fetchDoctorDetailsforChat(doctorId);
+    const doctorDetails = await this.PatientService.fetchDoctorDetailsforChat(doctorId);
 
     return res.status(200).json({
       success: true,
@@ -1300,7 +1308,7 @@ async fetchDoctorDetailsforChat (req: Request, res: Response): Promise<Response 
 
 
 }
-export default new PatientController();
+
 
 
 
