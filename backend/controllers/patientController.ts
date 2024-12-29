@@ -412,11 +412,13 @@ async getPatientDetails(req: Request, res: Response, next: NextFunction): Promis
     try {
       await this.PatientService.handleWalletPaymentSuccess(patientId, slotId, doctorId, totalAmount,adminFee,consultationFee);
       return res.status(200).json({ success: true, message: 'Payment successful, booking confirmed!' });
-    } catch (error) {
-      console.error('Error confirming wallet payment:', error);
-      next(error);
+    } catch (error:any) {
+      return res.status(400).json({
+        success: false,
+        message: error.message || 'An error occurred during the payment process.',
+      });
     }
-  };
+  }
   
 
   async  getNotifications (req: Request, res: Response) {

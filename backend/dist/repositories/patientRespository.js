@@ -797,5 +797,26 @@ export class PatientRepository {
             throw new Error('Error fetching doctor details from the database');
         }
     }
+    async checkSlotIsNotBooked(slotId, doctorId) {
+        const booking = await Booking.findOne({
+            slotId,
+            doctorId,
+            $or: [
+                { bookingStatus: 'confirmed' },
+                { bookingStatus: 'completed' },
+            ],
+        });
+        return booking ? true : false; // Return true if a booking is found
+    }
+    async isSlotBookedbeforecreateorder(slotId) {
+        const booking = await Booking.findOne({
+            slotId,
+            $or: [
+                { bookingStatus: 'confirmed' },
+                { bookingStatus: 'completed' },
+            ],
+        });
+        return booking ? true : false; // Return true if a booking is found
+    }
 }
 export default new PatientRepository();

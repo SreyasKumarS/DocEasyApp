@@ -328,11 +328,12 @@ export class PatientController {
             return res.status(200).json({ success: true, message: 'Payment successful, booking confirmed!' });
         }
         catch (error) {
-            console.error('Error confirming wallet payment:', error);
-            next(error);
+            return res.status(400).json({
+                success: false,
+                message: error.message || 'An error occurred during the payment process.',
+            });
         }
     }
-    ;
     async getNotifications(req, res) {
         try {
             const { patientId } = req.params;

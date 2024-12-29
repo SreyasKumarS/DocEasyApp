@@ -1295,6 +1295,12 @@ async searchDoctors(
 
 async createOrder(slotId: string, amount: number): Promise<any> {
   try {
+    
+    const isSlotBookedbeforecreateorder = await this.PatientRepository.isSlotBookedbeforecreateorder(slotId);
+    if (isSlotBookedbeforecreateorder) {
+      throw new Error('Cannot book the slot. It is already booked.');
+    }
+
     const options = {
       amount: amount * 100, // Amount in paise
       currency: 'INR',
@@ -1303,8 +1309,8 @@ async createOrder(slotId: string, amount: number): Promise<any> {
     const order = await razorpay.orders.create(options);
     return order;
   } catch (error) {
-    console.error('Error in service layer while creating order:', error);
-    throw new Error('Error in service layer while creating order');
+    console.error('Cannot book the slot. It is already booked.', error);
+    throw new Error('Cannot book the slot. It is already booked.');
   }
 }
 
@@ -1581,11 +1587,20 @@ async handleWalletPaymentSuccess(
   consultationFee:string
 ): Promise<void> {
   try {
+
+
+    const isSlotBooked = await this.PatientRepository.checkSlotIsNotBooked(slotId, doctorId);
+
+    if (isSlotBooked) {
+      throw new Error('Cannot book the slot. It is already booked.');
+    }
+
+
     const amount = parseFloat(totalAmount);
     const platformFee = parseFloat(adminFee); // Convert adminFee to a number
     const consultationFeeParsed = parseFloat(consultationFee); //
 
-    // Fetch wallet details using patientId
+
     const wallet = await this.PatientRepository.getWalletByPatientId(patientId);
     if (!wallet) {
       throw new Error('Wallet not found for the patient.');
@@ -1861,9 +1876,6 @@ async fetchDoctorDetailsforChat(doctorId: string){
     experience:doctorDetails.experience
   };
 }
-
-
-
 
 
 

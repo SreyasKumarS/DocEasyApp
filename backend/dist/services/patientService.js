@@ -277,6 +277,10 @@ export class PatientService {
     //-----------------------------------------------------------------------------
     async createOrder(slotId, amount) {
         try {
+            const isSlotBookedbeforecreateorder = await this.PatientRepository.isSlotBookedbeforecreateorder(slotId);
+            if (isSlotBookedbeforecreateorder) {
+                throw new Error('Cannot book the slot. It is already booked.');
+            }
             const options = {
                 amount: amount * 100, // Amount in paise
                 currency: 'INR',
@@ -286,8 +290,8 @@ export class PatientService {
             return order;
         }
         catch (error) {
-            console.error('Error in service layer while creating order:', error);
-            throw new Error('Error in service layer while creating order');
+            console.error('Cannot book the slot. It is already booked.', error);
+            throw new Error('Cannot book the slot. It is already booked.');
         }
     }
     async handlePaymentSuccess(paymentId, orderId, slotId, doctorId, // Accepting doctorId from the frontend
@@ -491,10 +495,13 @@ export class PatientService {
     }
     async handleWalletPaymentSuccess(patientId, slotId, doctorId, totalAmount, adminFee, consultationFee) {
         try {
+            const isSlotBooked = await this.PatientRepository.checkSlotIsNotBooked(slotId, doctorId);
+            if (isSlotBooked) {
+                throw new Error('Cannot book the slot. It is already booked.');
+            }
             const amount = parseFloat(totalAmount);
             const platformFee = parseFloat(adminFee); // Convert adminFee to a number
             const consultationFeeParsed = parseFloat(consultationFee); //
-            // Fetch wallet details using patientId
             const wallet = await this.PatientRepository.getWalletByPatientId(patientId);
             if (!wallet) {
                 throw new Error('Wallet not found for the patient.');

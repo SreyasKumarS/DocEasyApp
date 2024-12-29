@@ -95,13 +95,8 @@ const DoctorSlots = () => {
 
   const handleRazorpayPayment = async () => {
     const totalAmount = calculateTotalAmount();
-
-//----
     const { fixedFee, percentageFee } = adminFees;
     const adminFee = fixedFee !== null ? fixedFee : (consultationFee * (percentageFee || 0)) / 100;
-
-
-
     if (!isRazorpayLoaded) {
       toast.error('Payment system is not ready yet. Please try again later.');
       return;
@@ -137,15 +132,11 @@ const DoctorSlots = () => {
               prevSlots.map((s) => (s._id === selectedSlot._id ? { ...s, status: 'booked' } : s))
             );
             setShowPaymentModal(false);
-
-
             navigate('/patient/BookingSuccessScreen', {
               state: {
                 slotId: selectedSlot._id,
               },
             });
-       
- 
           } catch (error) {
             console.error('Error confirming payment:', error);
           }
@@ -161,24 +152,19 @@ const DoctorSlots = () => {
       };
       const razorpay = new (window as any).Razorpay(options);
       razorpay.open();
-    } catch (error) {
-      console.error('Payment failed:', error);
-      toast.error('Payment failed. Please try again.');
+    } catch (error:any) {
+      const errorMessage =
+      error.response?.data?.message || 'payment failed. Please try again.';
+      console.error('Error processing wallet payment:', error);
+      toast.error(errorMessage);
     }
   };
 
   const handleWalletPayment = async () => {
     try {
       const totalAmount = calculateTotalAmount();
-
-
       const { fixedFee, percentageFee } = adminFees;
       const adminFee = fixedFee !== null ? fixedFee : (consultationFee * (percentageFee || 0)) / 100;
-    
-
-
-
-
       await api.post('/patients/confirmWalletPayment', {
         slotId: selectedSlot._id,
         doctorId,
@@ -193,25 +179,20 @@ const DoctorSlots = () => {
         prevSlots.map((s) => (s._id === selectedSlot._id ? { ...s, status: 'booked' } : s))
       );
       setShowPaymentModal(false);
-
-
-
       navigate('/patient/BookingSuccessScreen', {
         state: {
           slotId: selectedSlot._id,
         },
       });
-
-
-
-
-
-    } catch (error) {
+    } catch (error:any) {
+      const errorMessage =
+      error.response?.data?.message || 'Wallet payment failed. Please try again.';
       console.error('Error processing wallet payment:', error);
-      toast.error('Wallet payment failed. Please try again.');
+      toast.error(errorMessage);
     }
   };
 
+  
   return (
     <Container className="py-4">
    <h1 

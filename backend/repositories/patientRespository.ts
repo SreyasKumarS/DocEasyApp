@@ -1101,6 +1101,35 @@ async fetchDoctorDetailsforChat(doctorId:string) {
 
 
 
+async checkSlotIsNotBooked(slotId: string, doctorId: string): Promise<boolean> {
+  const booking = await Booking.findOne({
+    slotId,
+    doctorId,
+    $or: [
+      { bookingStatus: 'confirmed' },
+      { bookingStatus: 'completed' },
+    ],
+  });
+
+  return booking ? true : false; // Return true if a booking is found
+}
+
+
+
+async isSlotBookedbeforecreateorder(slotId: string): Promise<boolean> {
+  const booking = await Booking.findOne({
+    slotId,
+    $or: [
+      { bookingStatus: 'confirmed' },
+      { bookingStatus: 'completed' },
+    ],
+  });
+
+  return booking ? true : false; // Return true if a booking is found
+}
+
+
+
 
 
 }

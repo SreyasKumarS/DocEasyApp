@@ -96,10 +96,10 @@ const PatientPrescriptionScreen = () => {
     backgroundColor: "#f9f9f9",
   }}
 >
-  <h5 className="text-secondary mb-3">
+  <h4 className="text-secondary mb-3" style={{ color: "#003366" }}>
     <FaClipboardList className="me-2 text-primary" />
     Appointment Information
-  </h5>
+  </h4>
   <div className="row">
     <div className="col-md-6">
       <p className="fs-6 mb-3">
@@ -135,10 +135,10 @@ const PatientPrescriptionScreen = () => {
     
         {/* Prescription Section */}
         <div className="p-3 mb-4" style={{ border: "1px solid #ddd", borderRadius: "10px" }}>
-          <h3 className="text-secondary mb-3">
-            <FaFileMedical className="me-2 text-primary" />
+          <h4 className="text-secondary mb-3">
+          <FaClipboardList className="me-2 text-primary" />
             Prescriptions and Diagnosis
-          </h3>
+          </h4>
           {prescription ? (
             <>
               <div className="mb-3">
