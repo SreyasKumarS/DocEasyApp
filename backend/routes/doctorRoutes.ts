@@ -129,7 +129,7 @@ router.get('/getPatientDetails/:slotId',authenticateUser, doctorControllers.getP
 router.put('/cancelAppointmentbydoctor',authenticateUser, doctorControllers.cancelAppointmentByDoctor.bind(doctorControllers));
 router.post('/addPrescription',authenticateUser, doctorControllers.addPrescription.bind(doctorControllers));
 router.get('/getCompletedBookings',authenticateUser, doctorControllers.getCompletedBookings.bind(doctorControllers));
-router.get('/getPrescription/:bookingId',authenticateUser, doctorControllers.getPrescription.bind(doctorControllers));
+router.get('/getPrescription/:bookingId',doctorControllers.getPrescription.bind(doctorControllers));
 router.get('/getChatList/:doctorId',doctorControllers.getChatList.bind(doctorControllers));
 router.post('/createWeeklyRecurringSlots',authenticateUser, doctorControllers.createWeeklyRecurringSlots.bind(doctorControllers));
 router.get('/fetchPatientDetails/:patientId', doctorControllers.fetchPatientDetailsforChat.bind(doctorControllers));
