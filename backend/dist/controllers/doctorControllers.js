@@ -5,13 +5,16 @@
 // import patientService from '../services/patientService.js';
 // import doctorServices from '../services/doctorServices.js';
 // import { io } from '../server.js'; 
-import DoctorService from '../services/doctorServices.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { io } from '../server.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-class DoctorController {
+export class DoctorController {
+    DoctorService;
+    constructor(doctorService) {
+        this.DoctorService = doctorService;
+    }
     // async registerDoctor(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     //   const {
     //     name,
@@ -95,7 +98,7 @@ class DoctorController {
                 console.error('Missing required fields');
                 return res.status(400).json({ message: 'All fields are required' });
             }
-            await DoctorService.registerDoctor(name, email, password, specialization, licenseNumber, medicalLicense, contactNumber, experience, clinicAddress, locality, biography, idProof, profilePicture, consultationFee);
+            await this.DoctorService.registerDoctor(name, email, password, specialization, licenseNumber, medicalLicense, contactNumber, experience, clinicAddress, locality, biography, idProof, profilePicture, consultationFee);
             return res.status(201).json({ message: 'OTP sent to your email' });
         }
         catch (error) {
@@ -106,7 +109,7 @@ class DoctorController {
     async verifyOtp(req, res, next) {
         const { email, otp } = req.body;
         try {
-            await DoctorService.verifyOtp(email, otp);
+            await this.DoctorService.verifyOtp(email, otp);
             return res.status(201).json({ message: 'Doctor verified successfully' });
         }
         catch (error) {
@@ -118,7 +121,7 @@ class DoctorController {
     async resendOtp(req, res, next) {
         const { email } = req.body;
         try {
-            await DoctorService.resendOtp(email);
+            await this.DoctorService.resendOtp(email);
             return res.status(200).json({ message: 'OTP resent to your email' });
         }
         catch (error) {
@@ -129,7 +132,7 @@ class DoctorController {
     async loginDoctor(req, res, next) {
         const { email, password } = req.body;
         try {
-            const result = await DoctorService.loginDoctor(email, password, res);
+            const result = await this.DoctorService.loginDoctor(email, password, res);
             return res.status(200).json({
                 message: 'Login successful',
                 doctor: result.doctor,
@@ -143,7 +146,7 @@ class DoctorController {
     ;
     async logoutDoctor(req, res, next) {
         try {
-            await DoctorService.logoutDoctor(res);
+            await this.DoctorService.logoutDoctor(res);
             return res.status(200).json({ message: 'Logout successful' });
         }
         catch (error) {
@@ -154,7 +157,7 @@ class DoctorController {
     async sendDoctorResetOtp(req, res, next) {
         const { email } = req.body;
         try {
-            await DoctorService.sendResetOtp(email);
+            await this.DoctorService.sendResetOtp(email);
             return res.status(200).json({ message: 'OTP sent to your email' });
         }
         catch (error) {
@@ -176,7 +179,7 @@ class DoctorController {
             return res.status(400).json({ message: 'Passwords do not match' });
         }
         try {
-            await DoctorService.resetPassword(email, newPassword);
+            await this.DoctorService.resetPassword(email, newPassword);
             return res.status(200).json({ message: 'Password reset successful' });
         }
         catch (error) {
@@ -191,7 +194,7 @@ class DoctorController {
             if (!doctorId) {
                 return res.status(400).json({ error: 'Doctor ID is required' });
             }
-            const doctor = await DoctorService.fetchDoctorById(doctorId);
+            const doctor = await this.DoctorService.fetchDoctorById(doctorId);
             if (!doctor) {
                 return res.status(404).json({ error: 'Doctor not found' });
             }
@@ -207,7 +210,7 @@ class DoctorController {
         try {
             const { doctorId } = req.params;
             const updateData = req.body;
-            const updatedDoctor = await DoctorService.updateDoctor(doctorId, updateData);
+            const updatedDoctor = await this.DoctorService.updateDoctor(doctorId, updateData);
             return res.status(200).json(updatedDoctor);
         }
         catch (error) {
@@ -220,7 +223,7 @@ class DoctorController {
         try {
             const { doctorId } = req.params;
             const { date, startHour, endHour, slotDuration } = req.body;
-            const slots = await DoctorService.DailySlots(doctorId, date, startHour, endHour, slotDuration);
+            const slots = await this.DoctorService.DailySlots(doctorId, date, startHour, endHour, slotDuration);
             return res.status(201).json(slots);
         }
         catch (error) {
@@ -234,7 +237,7 @@ class DoctorController {
         try {
             const { doctorId } = req.params;
             const { defaultMonthlyTime, excludedDates, specificDates, weeklyDays } = req.body;
-            const slots = await DoctorService.createDoctorMonthlySlots(doctorId, {
+            const slots = await this.DoctorService.createDoctorMonthlySlots(doctorId, {
                 defaultMonthlyTime,
                 excludedDates: excludedDates || [],
                 specificDates: specificDates || [],
@@ -252,7 +255,7 @@ class DoctorController {
         const { doctorId } = req.params;
         try {
             // Fetch all slots for the specified doctor
-            const slots = await DoctorService.getDoctorSlotsM(doctorId);
+            const slots = await this.DoctorService.getDoctorSlotsM(doctorId);
             res.status(200).json(slots);
         }
         catch (error) {
@@ -264,7 +267,7 @@ class DoctorController {
     async deleteSlot(req, res, next) {
         try {
             const { slotId } = req.params;
-            const deletedSlot = await DoctorService.deleteSlot(slotId);
+            const deletedSlot = await this.DoctorService.deleteSlot(slotId);
             return res.status(200).json({
                 message: 'Slot deleted successfully',
                 slot: deletedSlot,
@@ -280,7 +283,7 @@ class DoctorController {
         try {
             const doctorId = req.params.doctorId;
             const { date } = req.query;
-            const slots = await DoctorService.AppointmentsOverView(doctorId, date);
+            const slots = await this.DoctorService.AppointmentsOverView(doctorId, date);
             res.status(200).json(slots);
         }
         catch (error) {
@@ -292,7 +295,7 @@ class DoctorController {
         try {
             const doctorId = req.params.doctorId;
             const { date } = req.query;
-            const slots = await DoctorService.getDoctorSlotsByDate(doctorId, date);
+            const slots = await this.DoctorService.getDoctorSlotsByDate(doctorId, date);
             res.status(200).json(slots);
         }
         catch (error) {
@@ -310,7 +313,7 @@ class DoctorController {
             const [startHours, startMinutes] = startTime.split(":").map(Number);
             const [endHours, endMinutes] = endTime.split(":").map(Number);
             // Create slots using the service
-            const slots = await DoctorService.DailyRecurringSlots(doctorId, startDate, endDate, { hours: startHours, minutes: startMinutes }, { hours: endHours, minutes: endMinutes }, duration, breakStart, breakEnd, excludedDates);
+            const slots = await this.DoctorService.DailyRecurringSlots(doctorId, startDate, endDate, { hours: startHours, minutes: startMinutes }, { hours: endHours, minutes: endMinutes }, duration, breakStart, breakEnd, excludedDates);
             res.status(201).json({ message: "Slots created successfully.", slots });
         }
         catch (error) {
@@ -325,7 +328,7 @@ class DoctorController {
             if (!slotId) {
                 return res.status(400).json({ message: 'Slot ID is required' });
             }
-            const patientDetails = await DoctorService.getPatientDetailsBySlotId(slotId);
+            const patientDetails = await this.DoctorService.getPatientDetailsBySlotId(slotId);
             if (!patientDetails) {
                 return res.status(404).json({ message: 'Patient details not found' });
             }
@@ -340,9 +343,9 @@ class DoctorController {
     async cancelAppointmentByDoctor(req, res, next) {
         const { slotId, patientId, doctorId, amount, reason } = req.body;
         try {
-            const startTime = await DoctorService.startime(slotId);
-            const result = await DoctorService.cancelAndRefundByDoctor(slotId, patientId, amount, startTime, reason);
-            await DoctorService.createNotification({
+            const startTime = await this.DoctorService.startime(slotId);
+            const result = await this.DoctorService.cancelAndRefundByDoctor(slotId, patientId, amount, startTime, reason);
+            await this.DoctorService.createNotification({
                 patientId,
                 doctorId,
                 type: 'appointment',
@@ -375,7 +378,7 @@ class DoctorController {
                 medications,
                 additionalNotes,
             };
-            const result = await DoctorService.addPrescription({ slotId, patientId, doctorId, prescription });
+            const result = await this.DoctorService.addPrescription({ slotId, patientId, doctorId, prescription });
             res.status(200).json({
                 message: 'Prescription added successfully.',
                 booking: result,
@@ -388,7 +391,7 @@ class DoctorController {
     ;
     async getCompletedBookings(req, res, next) {
         try {
-            const completedBookings = await DoctorService.fetchCompletedBookings();
+            const completedBookings = await this.DoctorService.fetchCompletedBookings();
             res.status(200).json(completedBookings);
         }
         catch (error) {
@@ -399,7 +402,7 @@ class DoctorController {
     async getPrescription(req, res, next) {
         try {
             const { bookingId } = req.params;
-            const prescription = await DoctorService.fetchPrescription(bookingId);
+            const prescription = await this.DoctorService.fetchPrescription(bookingId);
             res.status(200).json(prescription);
         }
         catch (error) {
@@ -410,7 +413,7 @@ class DoctorController {
     async getChatList(req, res, next) {
         try {
             const { doctorId } = req.params; // Assuming doctor authentication is handled, and ID is in req.user
-            const chatList = await DoctorService.getChatListByDoctor(doctorId);
+            const chatList = await this.DoctorService.getChatListByDoctor(doctorId);
             res.status(200).json(chatList);
         }
         catch (error) {
@@ -422,7 +425,7 @@ class DoctorController {
     async createWeeklyRecurringSlots(req, res) {
         const { doctorId, startDate, endDate, daysConfig, excludedDates, slotDuration } = req.body;
         try {
-            const slots = await DoctorService.createWeeklyRecurringSlots(doctorId, new Date(startDate), new Date(endDate), daysConfig, excludedDates);
+            const slots = await this.DoctorService.createWeeklyRecurringSlots(doctorId, new Date(startDate), new Date(endDate), daysConfig, excludedDates);
             return res.status(200).json({ message: "Slots created successfully", slots });
         }
         catch (error) {
@@ -434,7 +437,7 @@ class DoctorController {
     async fetchPatientDetailsforChat(req, res) {
         try {
             const { patientId } = req.params;
-            const patientDetails = await DoctorService.fetchPatientDetailsforChat(patientId);
+            const patientDetails = await this.DoctorService.fetchPatientDetailsforChat(patientId);
             return res.status(200).json({
                 success: true,
                 data: patientDetails,
@@ -447,4 +450,3 @@ class DoctorController {
         }
     }
 }
-export default new DoctorController();

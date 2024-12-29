@@ -1,6 +1,22 @@
+// import { Response } from 'express';
+// import bcrypt from 'bcryptjs';
+// import sendEmail from '../utils/sendEmail.js';
+// import DoctorRepository from '../repositories/doctorRespository.js';
+// import {generateDoctorAccessToken,generateDoctorRefreshToken} from '../utils/doctorGenerateToken.js';
+// import Doctor, { IDoctor } from '../models/doctor.js'; 
+// import { ISlot,Slot  } from '../models/slot.js'; 
+// import { sendNotification } from '../config/notification.js'
+// import NotificationModel from '../models/notification.js';
+// import { validateSlotDuration } from '../config/slotHelper.js';
+// import { generateTimeSlots, convertTo24Hour } from '../config/slotHelper.js';
+// import { getCoordinates } from '../config/geocoordination.js';
+// import {doctorServicesICreateDoctorMonthlySlotsParams,doctorServicesAddPrescriptionParams,doctorServicesPopulatedPatient,
+//   doctorServicesPopulatedSlot
+//  } from '../interfaces/doctorBackendInterfaces.js'
+// import pkg from 'rrule';
+// const { RRule } = pkg;
 import bcrypt from 'bcryptjs';
 import sendEmail from '../utils/sendEmail.js';
-import DoctorRepository from '../repositories/doctorRespository.js';
 import { generateDoctorAccessToken, generateDoctorRefreshToken } from '../utils/doctorGenerateToken.js';
 import { Slot } from '../models/slot.js';
 import NotificationModel from '../models/notification.js';
@@ -9,13 +25,17 @@ import { generateTimeSlots, convertTo24Hour } from '../config/slotHelper.js';
 import { getCoordinates } from '../config/geocoordination.js';
 import pkg from 'rrule';
 const { RRule } = pkg;
-class DoctorService {
+export class DoctorService {
+    DoctorRepository;
+    constructor(doctorRepository) {
+        this.DoctorRepository = doctorRepository;
+    }
     async registerDoctor(name, email, password, specialization, licenseNumber, medicalLicense, contactNumber, experience, clinicAddress, locality, biography, idProof, profilePicture, consultationFee) {
         const coordinates = await getCoordinates(locality, email);
         if (!coordinates) {
             throw new Error('Unable to find location for the provided locality.');
         }
-        const existingDoctor = await DoctorRepository.findByEmail(email);
+        const existingDoctor = await this.DoctorRepository.findByEmail(email);
         if (existingDoctor) {
             throw new Error('Email already registered');
         }
@@ -46,11 +66,11 @@ class DoctorService {
             isVerified: false,
             isApproved: false, // Assuming you want to set this as false by default
         };
-        await DoctorRepository.saveDoctor(newDoctor);
+        await this.DoctorRepository.saveDoctor(newDoctor);
         await sendEmail(email, 'OTP Verification', `Your OTP is ${otp}`);
     }
     async verifyOtp(email, otp) {
-        const doctor = await DoctorRepository.findByEmail(email);
+        const doctor = await this.DoctorRepository.findByEmail(email);
         if (!doctor) {
             throw new Error('Doctor not found');
         }
@@ -61,10 +81,10 @@ class DoctorService {
             throw new Error('OTP expired');
         }
         doctor.isVerified = true;
-        await DoctorRepository.updateDoctor(doctor);
+        await this.DoctorRepository.updateDoctor(doctor);
     }
     async resendOtp(email) {
-        const doctor = await DoctorRepository.findByEmail(email);
+        const doctor = await this.DoctorRepository.findByEmail(email);
         if (!doctor) {
             throw new Error('Doctor not found');
         }
@@ -74,11 +94,11 @@ class DoctorService {
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         doctor.otp = otp;
         doctor.otpExpires = new Date(Date.now() + 10 * 60 * 1000);
-        await DoctorRepository.updateDoctor(doctor);
+        await this.DoctorRepository.updateDoctor(doctor);
         await sendEmail(email, 'OTP Verification', `Your new OTP is ${otp}`);
     }
     async loginDoctor(email, password, res) {
-        const doctor = await DoctorRepository.findByEmail(email);
+        const doctor = await this.DoctorRepository.findByEmail(email);
         if (!doctor) {
             console.error("Doctor not found for email:", email);
             throw new Error("Invalid email or password");
@@ -142,7 +162,7 @@ class DoctorService {
     }
     async sendResetOtp(email) {
         try {
-            const doctor = await DoctorRepository.findByEmail(email);
+            const doctor = await this.DoctorRepository.findByEmail(email);
             if (!doctor) {
                 console.error('Doctor not found for email:', email);
                 throw new Error('Doctor not found');
@@ -150,7 +170,7 @@ class DoctorService {
             const otp = Math.floor(100000 + Math.random() * 900000).toString();
             doctor.otp = otp;
             doctor.otpExpires = new Date(Date.now() + 10 * 60 * 1000);
-            await DoctorRepository.updateDoctor(doctor);
+            await this.DoctorRepository.updateDoctor(doctor);
             await sendEmail(email, 'OTP Verification', `Your new OTP is ${otp}`);
         }
         catch (error) {
@@ -160,7 +180,7 @@ class DoctorService {
     }
     async resetPassword(email, newPassword) {
         try {
-            const doctor = await DoctorRepository.findByEmail(email);
+            const doctor = await this.DoctorRepository.findByEmail(email);
             if (!doctor) {
                 throw new Error('Doctor not found');
             }
@@ -176,7 +196,7 @@ class DoctorService {
     }
     async fetchDoctorById(doctorId) {
         try {
-            const doctor = await DoctorRepository.findDoctorById(doctorId);
+            const doctor = await this.DoctorRepository.findDoctorById(doctorId);
             return doctor;
         }
         catch (error) {
@@ -185,14 +205,14 @@ class DoctorService {
         }
     }
     async updateDoctor(doctorId, updateData) {
-        const doctor = await DoctorRepository.findDoctorById(doctorId);
+        const doctor = await this.DoctorRepository.findDoctorById(doctorId);
         if (!doctor)
             throw new Error('Doctor not found');
-        return await DoctorRepository.updateDoctorById(doctorId, updateData);
+        return await this.DoctorRepository.updateDoctorById(doctorId, updateData);
     }
     async DailySlots(doctorId, date, startHour, endHour, slotDuration) {
         const slots = [];
-        const existingSlots = await DoctorRepository.findSlotsByDoctorAndDate(doctorId, date);
+        const existingSlots = await this.DoctorRepository.findSlotsByDoctorAndDate(doctorId, date);
         validateSlotDuration(existingSlots, slotDuration);
         const timeSlots = generateTimeSlots(startHour, endHour, slotDuration);
         for (const slotString of timeSlots) {
@@ -201,7 +221,7 @@ class DoctorService {
             const [endTime, endPeriod] = end.split(' ');
             const slotStart = new Date(`${date}T${convertTo24Hour(startTime, startPeriod)}`);
             const slotEnd = new Date(`${date}T${convertTo24Hour(endTime, endPeriod)}`);
-            const existingSlot = await DoctorRepository.findSlot({
+            const existingSlot = await this.DoctorRepository.findSlot({
                 doctorId,
                 startTime: slotStart,
                 endTime: slotEnd,
@@ -215,7 +235,7 @@ class DoctorService {
                     date,
                     status: 'available'
                 };
-                const slot = await DoctorRepository.createSlot(slotData);
+                const slot = await this.DoctorRepository.createSlot(slotData);
                 slots.push(slot);
             }
         }
@@ -235,7 +255,7 @@ class DoctorService {
         const weeklySlots = await this.generateWeeklySlots(doctorId, startDate, endDate, weeklyDays);
         generatedSlots = this.mergeSlots(generatedSlots, weeklySlots);
         // Save all the generated slots to the repository
-        return await DoctorRepository.saveGeneratedSlots(doctorId, generatedSlots);
+        return await this.DoctorRepository.saveGeneratedSlots(doctorId, generatedSlots);
     }
     // Generate slots for the specified date range (with breaks)
     async generateSlotsForDateRange(doctorId, startDate, endDate, startTime, endTime, breakStart, breakEnd) {
@@ -367,7 +387,7 @@ class DoctorService {
             throw new Error("Doctor ID is required to retrieve slots");
         }
         try {
-            const slots = await DoctorRepository.getDoctorSlotsM(doctorId);
+            const slots = await this.DoctorRepository.getDoctorSlotsM(doctorId);
             if (!slots) {
                 throw new Error("No slots found for this doctor");
             }
@@ -382,17 +402,17 @@ class DoctorService {
         if (!slotId) {
             throw new Error("Slot ID is required for deletion");
         }
-        const deletedSlot = await DoctorRepository.deleteSlotById(slotId);
+        const deletedSlot = await this.DoctorRepository.deleteSlotById(slotId);
         if (!deletedSlot) {
             throw new Error("Slot not found or already deleted");
         }
         return deletedSlot;
     }
     async AppointmentsOverView(doctorId, date) {
-        return await DoctorRepository.AppointmentsOverViewByDoctorAndDate(doctorId, date);
+        return await this.DoctorRepository.AppointmentsOverViewByDoctorAndDate(doctorId, date);
     }
     async getDoctorSlotsByDate(doctorId, date) {
-        return await DoctorRepository.getDoctorSlotsByDate(doctorId, date);
+        return await this.DoctorRepository.getDoctorSlotsByDate(doctorId, date);
     }
     async DailyRecurringSlots(doctorId, startDate, endDate, startTime, endTime, duration, breakStart, breakEnd, excludedDates) {
         const rule = new RRule({
@@ -428,9 +448,9 @@ class DoctorService {
                     slotStart = newSlotEnd;
                     continue;
                 }
-                const existingSlot = await DoctorRepository.findSlotConflict(doctorId, slotStart, newSlotEnd);
+                const existingSlot = await this.DoctorRepository.findSlotConflict(doctorId, slotStart, newSlotEnd);
                 if (!existingSlot) {
-                    const createdSlot = await DoctorRepository.createSlotRecurringDaily({
+                    const createdSlot = await this.DoctorRepository.createSlotRecurringDaily({
                         doctorId,
                         startTime: slotStart,
                         endTime: newSlotEnd,
@@ -448,11 +468,11 @@ class DoctorService {
     }
     async getPatientDetailsBySlotId(slotId) {
         try {
-            const booking = await DoctorRepository.getPatientDetailsBySlotId(slotId);
+            const booking = await this.DoctorRepository.getPatientDetailsBySlotId(slotId);
             if (!booking) {
                 return null;
             }
-            const amount = await DoctorRepository.getAmountBySlotId(slotId);
+            const amount = await this.DoctorRepository.getAmountBySlotId(slotId);
             // Extract patient details from the populated `patientId`
             const patient = booking.patientId;
             const patientDetails = {
@@ -491,13 +511,13 @@ class DoctorService {
                     ? `A refund of ₹${refundAmount.toFixed(2)} has been processed.`
                     : `No refund applicable.`}`;
             // Update or create the wallet for the patient
-            let wallet = await DoctorRepository.findByPatientId(patientId);
+            let wallet = await this.DoctorRepository.findByPatientId(patientId);
             if (!wallet)
-                wallet = await DoctorRepository.createWallet(patientId);
+                wallet = await this.DoctorRepository.createWallet(patientId);
             if (refundAmount > 0)
-                wallet = await DoctorRepository.updateBalance(patientId, refundAmount);
+                wallet = await this.DoctorRepository.updateBalance(patientId, refundAmount);
             // Create transaction for the refund
-            const transaction = await DoctorRepository.createTransaction({
+            const transaction = await this.DoctorRepository.createTransaction({
                 patientId,
                 amount: refundAmount,
                 type: refundAmount > 0 ? 'refund' : 'no refund',
@@ -505,7 +525,7 @@ class DoctorService {
                 description: refundAmount > 0 ? `Refund for cancelled appointment` : `Cancellation without refund.`,
             });
             // Deleting the slot (appointment) after cancellation
-            const deletedSlot = await DoctorRepository.deleteSlotById(slotId);
+            const deletedSlot = await this.DoctorRepository.deleteSlotById(slotId);
             if (!deletedSlot) {
                 throw new Error('Slot not found or could not be deleted');
             }
@@ -534,7 +554,7 @@ class DoctorService {
             throw new Error('Slot ID is required.');
         }
         // Fetch start time from the repository
-        const startTime = await DoctorRepository.StartTime(slotId);
+        const startTime = await this.DoctorRepository.StartTime(slotId);
         if (!startTime) {
             throw new Error(`No start time found for slot ID ${slotId}`);
         }
@@ -543,18 +563,18 @@ class DoctorService {
     }
     async addPrescription({ slotId, patientId, doctorId, prescription, }) {
         // Find the booking with the given criteria
-        const booking = await DoctorRepository.findConfirmedBooking(slotId, patientId);
+        const booking = await this.DoctorRepository.findConfirmedBooking(slotId, patientId);
         if (!booking) {
             throw new Error('No confirmed booking found for the given criteria.');
         }
         // Serialize the prescription object to a string
         const serializedPrescription = JSON.stringify(prescription);
         // Update the prescription and status
-        const updatedBooking = await DoctorRepository.updateBookingPrescription(booking._id.toString(), serializedPrescription);
+        const updatedBooking = await this.DoctorRepository.updateBookingPrescription(booking._id.toString(), serializedPrescription);
         return updatedBooking;
     }
     async fetchCompletedBookings() {
-        const bookings = await DoctorRepository.getCompletedBookings();
+        const bookings = await this.DoctorRepository.getCompletedBookings();
         return bookings.map((booking) => {
             const patient = booking.patientId;
             const slot = booking.slotId;
@@ -569,7 +589,7 @@ class DoctorService {
         });
     }
     async fetchPrescription(bookingId) {
-        const prescription = await DoctorRepository.getPrescriptionByBookingId(bookingId);
+        const prescription = await this.DoctorRepository.getPrescriptionByBookingId(bookingId);
         if (!prescription)
             throw new Error('Prescription not found');
         return prescription;
@@ -577,7 +597,7 @@ class DoctorService {
     async getChatListByDoctor(doctorId) {
         try {
             // Fetch distinct patients who have interacted with the doctor
-            const chatList = await DoctorRepository.getChatsByDoctor(doctorId);
+            const chatList = await this.DoctorRepository.getChatsByDoctor(doctorId);
             return chatList;
         }
         catch (error) {
@@ -606,7 +626,7 @@ class DoctorService {
                 const slotDate = new Date(date);
                 // Delete existing slots for this date
                 const dateStr = slotDate.toISOString().split('T')[0];
-                await DoctorRepository.deleteSlotsForDate(doctorId, dateStr);
+                await this.DoctorRepository.deleteSlotsForDate(doctorId, dateStr);
                 let currentStartTime = new Date(`${slotDate.toDateString()} ${config.startTime}`);
                 const breakStart = config.breakStart
                     ? new Date(`${slotDate.toDateString()} ${config.breakStart}`)
@@ -639,14 +659,14 @@ class DoctorService {
                 }
             }
         }
-        const savedSlots = await DoctorRepository.saveSlots(newSlots);
+        const savedSlots = await this.DoctorRepository.saveSlots(newSlots);
         return savedSlots;
     }
     async fetchPatientDetailsforChat(patientId) {
         if (!patientId) {
             throw new Error('Doctor ID is required');
         }
-        const patientDetails = await DoctorRepository.fetchPatientDetailsforChat(patientId);
+        const patientDetails = await this.DoctorRepository.fetchPatientDetailsforChat(patientId);
         if (!patientDetails) {
             throw new Error('Doctor not found');
         }
@@ -659,4 +679,4 @@ class DoctorService {
         };
     }
 }
-export default new DoctorService();
+// export default new DoctorService();

@@ -3,9 +3,6 @@ import path from 'path';
 import morgan from 'morgan';
 import * as rfs from 'rotating-file-stream';
 
-
-
-
 import express from 'express';
 import http from 'http'; 
 import { Server } from 'socket.io'; 
@@ -18,7 +15,13 @@ import patientRoutes from './routes/patientRoutes.js';
 import doctorRoutes from './routes/doctorRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 // import {sendMessage}  from './controllers/patientController.js'; 
-import patientController from './controllers/patientController.js';
+import {PatientController} from './controllers/patientController.js';
+import { PatientService } from './services/patientService.js';
+import { PatientRepository } from './repositories/patientRespository.js'
+const patientRepository = new PatientRepository();
+const patientService = new PatientService(patientRepository)
+const patientController = new PatientController(patientService);
+
 import {refreshAccessToken} from './utils/refreshToken.js'
 
 
@@ -139,7 +142,7 @@ socket.on('sendChatMessage', async (data) => {
 
   try {
 
-    const newMessage = await  patientController.sendMessage(data);
+    const newMessage = await  patientController.sendMessage(data)
 
     const room = `${data.patientId}-${data.doctorId}`;
     io.to(room).emit('receiveChatMessage', newMessage);

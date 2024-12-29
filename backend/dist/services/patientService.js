@@ -1,6 +1,25 @@
+// import { Response, Request, NextFunction } from 'express';
+// import bcrypt from 'bcryptjs';
+// import sendEmail from '../utils/sendEmail.js';
+// import PatientRepository from '../repositories/patientRespository.js';
+// import DoctorRepository from '../repositories/doctorRespository.js';
+// import Doctor, { IDoctor } from '../models/doctor.js'; 
+// import Booking from '../models/booking.js'; 
+// import {generatePatientAccessToken, generatePatientRefreshToken} from '../utils/patientGenerateToken.js';
+// import {verifyGoogleToken} from '../middleware/googleAuthMiddleware.js';
+// import { TokenPayload } from 'google-auth-library';
+// import { getCoordinates } from '../config/geocoordination.js'; 
+// import Razorpay from 'razorpay';
+// import { Types } from 'mongoose';
+// import {Review} from '../models/reviews.js'
+// import mongoose from 'mongoose';
+// import Chat from '../models/chat.js'
+// import {patientServiceSlot,patientServiceSlotDoctor,patientServiceSBooking,patientServiceSPopulatedPatient,
+//   patientServiceSPopulatedSlot,patientServiceSPopulatedDoctor
+// } 
+// from '../interfaces/patientBackendInterfaces.js'
 import bcrypt from 'bcryptjs';
 import sendEmail from '../utils/sendEmail.js';
-import PatientRepository from '../repositories/patientRespository.js';
 import DoctorRepository from '../repositories/doctorRespository.js';
 import Booking from '../models/booking.js';
 import { generatePatientAccessToken, generatePatientRefreshToken } from '../utils/patientGenerateToken.js';
@@ -13,14 +32,18 @@ const razorpay = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID, // Type assertion
     key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
-class PatientService {
+export class PatientService {
+    PatientRepository;
+    constructor(patientRepository) {
+        this.PatientRepository = patientRepository;
+    }
     async registerPatient(name, email, password, age, gender, address, locality, contactNumber, bloodGroup) {
         try {
             const coordinates = await getCoordinates(locality, email);
             if (!coordinates) {
                 throw new Error('Unable to find location for the provided locality.');
             }
-            const existingPatient = await PatientRepository.findByEmail(email);
+            const existingPatient = await this.PatientRepository.findByEmail(email);
             if (existingPatient) {
                 throw new Error('Email already registered');
             }
@@ -44,7 +67,7 @@ class PatientService {
                 contactNumber,
                 bloodGroup,
             };
-            await PatientRepository.savePatient(newPatient);
+            await this.PatientRepository.savePatient(newPatient);
             await sendEmail(email, 'OTP Verification', `Your OTP is ${otp}`);
         }
         catch (error) {
@@ -53,7 +76,7 @@ class PatientService {
         }
     }
     async verifyOtp(email, otp) {
-        const patient = await PatientRepository.findByEmail(email);
+        const patient = await this.PatientRepository.findByEmail(email);
         if (!patient) {
             throw new Error('Patient not found');
         }
@@ -64,10 +87,10 @@ class PatientService {
             throw new Error('OTP expired');
         }
         patient.isVerified = true;
-        await PatientRepository.updatePatient(patient);
+        await this.PatientRepository.updatePatient(patient);
     }
     async resendOtp(email) {
-        const patient = await PatientRepository.findByEmail(email);
+        const patient = await this.PatientRepository.findByEmail(email);
         if (!patient) {
             throw new Error('Patient not found');
         }
@@ -77,11 +100,11 @@ class PatientService {
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         patient.otp = otp;
         patient.otpExpires = new Date(Date.now() + 10 * 60 * 1000);
-        await PatientRepository.updatePatient(patient);
+        await this.PatientRepository.updatePatient(patient);
         await sendEmail(email, 'OTP Verification', `Your new OTP is ${otp}`);
     }
     async loginPatient(email, password, res) {
-        const patient = await PatientRepository.findByEmail(email);
+        const patient = await this.PatientRepository.findByEmail(email);
         if (!patient)
             throw new Error('Invalid email or password');
         const isMatch = await bcrypt.compare(password, patient.password);
@@ -114,7 +137,7 @@ class PatientService {
     }
     async sendResetOtp(email) {
         try {
-            const patient = await PatientRepository.findByEmail(email);
+            const patient = await this.PatientRepository.findByEmail(email);
             if (!patient) {
                 console.error('Patient not found for email:', email);
                 throw new Error('Patient not found');
@@ -122,7 +145,7 @@ class PatientService {
             const otp = Math.floor(100000 + Math.random() * 900000).toString();
             patient.otp = otp;
             patient.otpExpires = new Date(Date.now() + 10 * 60 * 1000);
-            await PatientRepository.updatePatient(patient);
+            await this.PatientRepository.updatePatient(patient);
             await sendEmail(email, 'OTP Verification', `Your new OTP is ${otp}`);
         }
         catch (error) {
@@ -131,7 +154,7 @@ class PatientService {
         }
     }
     async resetPassword(email, newPassword) {
-        const patient = await PatientRepository.findByEmail(email);
+        const patient = await this.PatientRepository.findByEmail(email);
         if (!patient) {
             throw new Error('User not found');
         }
@@ -142,7 +165,7 @@ class PatientService {
     }
     async getPatientDetails(patientId) {
         try {
-            const patient = await PatientRepository.findById(patientId); // Assuming your repository has a findById method
+            const patient = await this.PatientRepository.findById(patientId); // Assuming your repository has a findById method
             if (!patient) {
                 throw new Error('Patient not found');
             }
@@ -154,7 +177,7 @@ class PatientService {
         }
     }
     async PatientProfileEdit(id, updatedData) {
-        const updatedPatient = await PatientRepository.updatePatientProfile(id, updatedData);
+        const updatedPatient = await this.PatientRepository.updatePatientProfile(id, updatedData);
         if (!updatedPatient) {
             throw new Error('Patient not found');
         }
@@ -162,7 +185,7 @@ class PatientService {
     }
     async getSpecializations() {
         try {
-            const specializations = await PatientRepository.getDistinctSpecializations();
+            const specializations = await this.PatientRepository.getDistinctSpecializations();
             return specializations;
         }
         catch (error) {
@@ -171,7 +194,7 @@ class PatientService {
     }
     async getDoctorsBySpecialization(specialization) {
         try {
-            const doctors = await PatientRepository.getDoctorsBySpecialization(specialization);
+            const doctors = await this.PatientRepository.getDoctorsBySpecialization(specialization);
             return doctors;
         }
         catch (error) {
@@ -181,7 +204,7 @@ class PatientService {
     }
     async fetchSlots(doctorId, date) {
         try {
-            const slots = await PatientRepository.getSlotsByDoctorAndDate(doctorId, date);
+            const slots = await this.PatientRepository.getSlotsByDoctorAndDate(doctorId, date);
             return slots;
         }
         catch (error) {
@@ -200,7 +223,7 @@ class PatientService {
                 throw new Error('Email is required from Google token');
             }
             const userName = name || 'Unnamed User';
-            const patient = await PatientRepository.findOrCreatePatient(email, userName);
+            const patient = await this.PatientRepository.findOrCreatePatient(email, userName);
             let accessToken;
             try {
                 accessToken = generatePatientAccessToken(patient._id.toString(), "patient");
@@ -227,7 +250,7 @@ class PatientService {
         }
     }
     async getNearbyDoctors(patientId, radius) {
-        const patient = await PatientRepository.findByIdfornearbydoc(patientId);
+        const patient = await this.PatientRepository.findByIdfornearbydoc(patientId);
         if (!patient) {
             throw new Error('Patient not found');
         }
@@ -240,7 +263,7 @@ class PatientService {
     }
     async searchDoctors(search, specialization, locality, page, limit) {
         try {
-            const searchResult = await PatientRepository.findDoctors(search, specialization, locality, page, limit);
+            const searchResult = await this.PatientRepository.findDoctors(search, specialization, locality, page, limit);
             if (!searchResult) {
                 throw new Error('No doctors found with the specified criteria');
             }
@@ -306,7 +329,7 @@ class PatientService {
                 await booking.save();
             }
             // Update the slot status to 'booked'
-            await PatientRepository.updateSlotStatus(slotId, 'booked');
+            await this.PatientRepository.updateSlotStatus(slotId, 'booked');
         }
         catch (error) {
             console.error('Error in service layer while handling payment success:', error);
@@ -315,7 +338,7 @@ class PatientService {
     }
     async getPatientBookings(patientId) {
         try {
-            const bookings = await PatientRepository.getBookingsByPatientId(patientId);
+            const bookings = await this.PatientRepository.getBookingsByPatientId(patientId);
             const formattedBookings = bookings.map((booking) => {
                 if (!booking || !booking.slotId || !booking.doctorId) {
                     console.error('Invalid booking data:', booking);
@@ -358,23 +381,23 @@ class PatientService {
                 refundAmount = 0; // No refund
             }
             // Step 2: Cancel booking and update slot status
-            const booking = await PatientRepository.cancelBooking(slotId, patientId);
+            const booking = await this.PatientRepository.cancelBooking(slotId, patientId);
             if (!booking)
                 throw new Error('Booking not found or already cancelled');
-            await PatientRepository.updateSlotStatusofcancel(slotId, 'available');
+            await this.PatientRepository.updateSlotStatusofcancel(slotId, 'available');
             // Step 3: Refund amount to wallet (if any)
-            let wallet = await PatientRepository.findByPatientId(patientId);
+            let wallet = await this.PatientRepository.findByPatientId(patientId);
             if (!wallet) {
-                wallet = await PatientRepository.createWallet(patientId);
+                wallet = await this.PatientRepository.createWallet(patientId);
             }
             // Step 4: Refund amount to wallet (if any)
             if (refundAmount > 0) {
-                wallet = await PatientRepository.updateBalance(patientId, refundAmount);
+                wallet = await this.PatientRepository.updateBalance(patientId, refundAmount);
                 if (!wallet)
                     throw new Error('Failed to update wallet balance.');
             }
             // Step 4: Create a transaction record for the refund
-            await PatientRepository.createTransaction({
+            await this.PatientRepository.createTransaction({
                 patientId,
                 amount: refundAmount,
                 type: refundAmount > 0 ? 'refund' : 'no refund',
@@ -416,10 +439,10 @@ class PatientService {
         }
     }
     async rechargeWallet(patientId, amount) {
-        const wallet = await PatientRepository.updateBalance(patientId, amount);
+        const wallet = await this.PatientRepository.updateBalance(patientId, amount);
         if (!wallet)
             throw new Error('Failed to update wallet balance.');
-        await PatientRepository.createTransaction({
+        await this.PatientRepository.createTransaction({
             patientId,
             amount,
             type: 'recharge',
@@ -429,18 +452,18 @@ class PatientService {
         return wallet;
     }
     async getWalletDetails(patientId, page, limit) {
-        const wallet = await PatientRepository.findByPatientId(patientId);
+        const wallet = await this.PatientRepository.findByPatientId(patientId);
         if (!wallet)
             throw new Error('Wallet not found.');
         const skip = (page - 1) * limit;
-        const transactions = await PatientRepository.findByPatientIdTransaction(patientId, skip, limit);
-        const totalTransactions = await PatientRepository.countTransactionsByPatientId(patientId);
+        const transactions = await this.PatientRepository.findByPatientIdTransaction(patientId, skip, limit);
+        const totalTransactions = await this.PatientRepository.countTransactionsByPatientId(patientId);
         return { wallet, transactions, totalTransactions };
     }
     async fetchPlatformFee() {
         try {
             // Fetch platform fee from the repository
-            const platformFee = await PatientRepository.fetchPlatformFee();
+            const platformFee = await this.PatientRepository.fetchPlatformFee();
             // Check if platform fee exists
             if (!platformFee) {
                 throw new Error('Platform fee configuration not found.');
@@ -455,7 +478,7 @@ class PatientService {
     }
     async fetchConsultationFee(doctorId) {
         try {
-            const consultationFee = await PatientRepository.getConsultationFee(doctorId);
+            const consultationFee = await this.PatientRepository.getConsultationFee(doctorId);
             if (!consultationFee) {
                 throw new Error(`Consultation fee not found for doctor with ID: ${doctorId}`);
             }
@@ -472,7 +495,7 @@ class PatientService {
             const platformFee = parseFloat(adminFee); // Convert adminFee to a number
             const consultationFeeParsed = parseFloat(consultationFee); //
             // Fetch wallet details using patientId
-            const wallet = await PatientRepository.getWalletByPatientId(patientId);
+            const wallet = await this.PatientRepository.getWalletByPatientId(patientId);
             if (!wallet) {
                 throw new Error('Wallet not found for the patient.');
             }
@@ -480,9 +503,9 @@ class PatientService {
                 throw new Error('Insufficient wallet balance.');
             }
             // Deduct the wallet balance atomically
-            await PatientRepository.updateWalletBalance(wallet._id, wallet.balance - amount);
+            await this.PatientRepository.updateWalletBalance(wallet._id, wallet.balance - amount);
             // Save the wallet payment transaction
-            await PatientRepository.createTransaction({
+            await this.PatientRepository.createTransaction({
                 patientId,
                 amount,
                 type: 'wallet payment',
@@ -519,7 +542,7 @@ class PatientService {
                 await booking.save();
             }
             // Update the slot status to 'booked'
-            await PatientRepository.updateSlotStatus(slotId, 'booked');
+            await this.PatientRepository.updateSlotStatus(slotId, 'booked');
         }
         catch (error) {
             console.error('Error in service layer while handling wallet payment success:', error);
@@ -528,7 +551,7 @@ class PatientService {
     }
     async getNotificationsByPatientId(patientId) {
         try {
-            const notifications = await PatientRepository.findNotificationByPatientId(patientId);
+            const notifications = await this.PatientRepository.findNotificationByPatientId(patientId);
             return notifications;
         }
         catch (error) {
@@ -538,7 +561,7 @@ class PatientService {
     }
     async updateNotificationReadStatus(id, status) {
         try {
-            const updatedNotification = await PatientRepository.updateStatus(id, status);
+            const updatedNotification = await this.PatientRepository.updateStatus(id, status);
             return updatedNotification;
         }
         catch (error) {
@@ -548,7 +571,7 @@ class PatientService {
     }
     async getDoctorDetailsForPatient(doctorId) {
         try {
-            const doctor = await PatientRepository.getDoctorDetailsForPatient(doctorId);
+            const doctor = await this.PatientRepository.getDoctorDetailsForPatient(doctorId);
             if (!doctor) {
                 throw new Error('Doctor not found');
             }
@@ -561,7 +584,7 @@ class PatientService {
     }
     async getReviewsByDoctor(doctorId) {
         try {
-            const reviews = await PatientRepository.getReviewsByDoctorId(doctorId);
+            const reviews = await this.PatientRepository.getReviewsByDoctorId(doctorId);
             return reviews;
         }
         catch (error) {
@@ -579,7 +602,7 @@ class PatientService {
                 date: new Date(),
             });
             // Save the review using the repository
-            const savedReview = await PatientRepository.saveReview(review);
+            const savedReview = await this.PatientRepository.saveReview(review);
             return savedReview;
         }
         catch (error) {
@@ -587,11 +610,11 @@ class PatientService {
         }
     }
     async getDoctorAverageRating(objectId) {
-        return await PatientRepository.getAverageRatingForDoctor(objectId);
+        return await this.PatientRepository.getAverageRatingForDoctor(objectId);
     }
     async getDoctorAverageRatingformultipleDoctors(doctorIds) {
         const ratings = await Promise.all(doctorIds.map(async (doctorId) => {
-            const averageRating = await PatientRepository.getDoctorAverageRatingformultipleDoctors(doctorId);
+            const averageRating = await this.PatientRepository.getDoctorAverageRatingformultipleDoctors(doctorId);
             return { doctorId, averageRating };
         }));
         return ratings;
@@ -599,17 +622,17 @@ class PatientService {
     async getBookingDetailsforSuccessPage(slotId) {
         try {
             // Fetch booking details using the repository
-            const booking = await PatientRepository.findBookingBySlotIdforSuccessPage(slotId);
+            const booking = await this.PatientRepository.findBookingBySlotIdforSuccessPage(slotId);
             if (!booking) {
                 throw new Error('Booking not found');
             }
             // Include doctor details in the booking information
-            const doctorDetails = await PatientRepository.findDoctorByIdforSuccessPage(booking.doctorId);
+            const doctorDetails = await this.PatientRepository.findDoctorByIdforSuccessPage(booking.doctorId);
             if (!doctorDetails) {
                 throw new Error('Doctor details not found');
             }
             // Include slot details in the booking information
-            const slotDetails = await PatientRepository.findSlotByIdforSuccessPage(slotId);
+            const slotDetails = await this.PatientRepository.findSlotByIdforSuccessPage(slotId);
             if (!slotDetails) {
                 throw new Error('Slot details not found');
             }
@@ -628,7 +651,7 @@ class PatientService {
         }
     }
     async getAppointmentHistoryForPatient(patientId) {
-        const appointments = await PatientRepository.getAppointmentHistoryForPatient(patientId);
+        const appointments = await this.PatientRepository.getAppointmentHistoryForPatient(patientId);
         return appointments.map((appointment, index) => {
             const patient = appointment.patientId;
             const slot = appointment.slotId;
@@ -650,7 +673,7 @@ class PatientService {
         });
     }
     async sendMessage(patientId, doctorId, message, sender) {
-        const newMessage = await PatientRepository.saveMessage(patientId, doctorId, message, sender);
+        const newMessage = await this.PatientRepository.saveMessage(patientId, doctorId, message, sender);
         return newMessage;
     }
     async getChatHistory(patientId, doctorId) {
@@ -662,7 +685,7 @@ class PatientService {
                 ],
             };
             // Call the repository method
-            const chatHistory = await PatientRepository.getChatHistory(query);
+            const chatHistory = await this.PatientRepository.getChatHistory(query);
             return chatHistory;
         }
         catch (error) {
@@ -674,7 +697,7 @@ class PatientService {
         if (!doctorId) {
             throw new Error('Doctor ID is required');
         }
-        const doctorDetails = await PatientRepository.fetchDoctorDetailsforChat(doctorId);
+        const doctorDetails = await this.PatientRepository.fetchDoctorDetailsforChat(doctorId);
         if (!doctorDetails) {
             throw new Error('Doctor not found');
         }
@@ -687,4 +710,3 @@ class PatientService {
         };
     }
 }
-export default new PatientService();
