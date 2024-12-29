@@ -28,7 +28,7 @@ import BookingSuccessScreen from './screens/PatientScreen/BookingSucessPage';
 import AppointmentHistoryScreen from './screens/PatientScreen/AppointmentHistory';
 import PatientPrescriptionScreen from './screens/PatientScreen/PatientPrescritpionPage';
 import PatientChat from './screens/PatientScreen/PatientChat';
-
+import PatientProtectedRoute from './components/patientComponents/PatientUrlProtect'
 
 
 
@@ -52,7 +52,7 @@ import MyPatientsScreen from './screens/DoctorScreen/MyPatientsScreen';
 import MyPatientPrescriptionScreen from './screens/DoctorScreen/MyPatientPrescriptionScreen';
 import ChatListandRequests from './screens/DoctorScreen/ChatListandRequests';
 import DoctorSideChat from './screens/DoctorScreen/DoctorSideChat';
-
+import DoctorProtectedRoute from './components/doctorComponent/DoctorUrlProtect';
 
 
 
@@ -74,7 +74,7 @@ import TopPatients from './screens/AdminScreen/topBookedPatients';
 import TopBookedDoctors from './screens/AdminScreen/topBookedDoctors';
 import ChartPage from './screens/AdminScreen/chartPage'; 
 import ReportsPage from './screens/AdminScreen/reportPage'; 
-         
+import AdminProtectedRoute from './components/adminComponent/AdminUrlProtect'        
 
 
 
@@ -89,19 +89,20 @@ const router = createBrowserRouter(
       <Route path="login" element={<LoginScreen />} /> 
       <Route path="forgot-password" element={<ForgotPasswordScreen />} /> 
       <Route path="resetPassword" element={<ResetPasswordScreen />} /> 
-      <Route path="PatientProfileScreen" element={<PatientProfile />} /> 
-      <Route path="EditPatientProfile" element={<EditPatientProfile />} /> 
-      <Route path="Specializations" element={<Specializations />} /> 
-      <Route path="DoctorsList" element={<DoctorsList />} /> 
-      <Route path="DoctorSlots" element={<DoctorSlots />} /> 
-      <Route path="BookedAppointmentsScreen" element={<BookedAppointmentsScreen />} /> 
-      <Route path="WalletPage" element={<WalletPage />} /> 
-      <Route path="NotificationPage" element={<NotificationPage />} /> 
-      <Route path="DoctorDetailsPagePatient" element={<DoctorDetailsPagePatient />} /> 
-      <Route path="BookingSuccessScreen" element={<BookingSuccessScreen />} /> 
-      <Route path="AppointmentHistoryScreen" element={<AppointmentHistoryScreen />} /> 
-      <Route path="PatientPrescriptionScreen" element={<PatientPrescriptionScreen />} />
-      <Route path="PatientChat" element={<PatientChat />} />
+
+      <Route path="PatientProfileScreen" element={<PatientProtectedRoute><PatientProfile /></PatientProtectedRoute>} /> 
+      <Route path="EditPatientProfile" element={<PatientProtectedRoute><EditPatientProfile /></PatientProtectedRoute>} /> 
+      <Route path="Specializations" element={<PatientProtectedRoute><Specializations /></PatientProtectedRoute>} /> 
+      <Route path="DoctorsList" element={<PatientProtectedRoute><DoctorsList /></PatientProtectedRoute>} /> 
+      <Route path="DoctorSlots" element={<PatientProtectedRoute><DoctorSlots /></PatientProtectedRoute>} /> 
+      <Route path="BookedAppointmentsScreen" element={<PatientProtectedRoute><BookedAppointmentsScreen /></PatientProtectedRoute>} /> 
+      <Route path="WalletPage" element={<PatientProtectedRoute><WalletPage /></PatientProtectedRoute>} /> 
+      <Route path="NotificationPage" element={<PatientProtectedRoute><NotificationPage /></PatientProtectedRoute>} /> 
+      <Route path="DoctorDetailsPagePatient" element={<PatientProtectedRoute><DoctorDetailsPagePatient /></PatientProtectedRoute>} /> 
+      <Route path="BookingSuccessScreen" element={<PatientProtectedRoute><BookingSuccessScreen /></PatientProtectedRoute>} /> 
+      <Route path="AppointmentHistoryScreen" element={<PatientProtectedRoute><AppointmentHistoryScreen /></PatientProtectedRoute>} /> 
+      <Route path="PatientPrescriptionScreen" element={<PatientProtectedRoute><PatientPrescriptionScreen /></PatientProtectedRoute>} />
+      <Route path="PatientChat" element={<PatientProtectedRoute><PatientChat /></PatientProtectedRoute>} />
       
     </Route>
 
@@ -112,21 +113,22 @@ const router = createBrowserRouter(
         <Route path="DoctorHomeScreen" element={<DoctorHomeScreen />} />
         <Route path="DoctorForgotPasswordScreen" element={<DoctorForgotPasswordScreen />} />
         <Route path="resetpassword" element={<ResetDoctorPasswordWithOtpScreen />} />
-        <Route path="DoctorProfileDocside" element={<DoctorProfileDocside />} />
-        <Route path="DoctorProfileEdit" element={<DoctorProfileEdit />} />
-        <Route path="CreateAppointmentSlots" element={<CreateAppointmentSlots />} />
-        <Route path="DoctorSlotsDisplay" element={<SlotsDisplay />} />
-        <Route path="AppointmentsOverview" element={<AppointmentsOverview />} />
-        <Route path="AppointmentsDetails" element={<AppointmentsDetails />} />
-        <Route path="DailySlot" element={<DailySlot />} />
+
+        <Route path="DoctorProfileDocside" element={<DoctorProtectedRoute><DoctorProfileDocside /></DoctorProtectedRoute>} />
+        <Route path="DoctorProfileEdit" element={<DoctorProtectedRoute><DoctorProfileEdit /></DoctorProtectedRoute>} />
+        <Route path="CreateAppointmentSlots" element={<DoctorProtectedRoute><CreateAppointmentSlots /></DoctorProtectedRoute>} />
+        <Route path="DoctorSlotsDisplay" element={<DoctorProtectedRoute><SlotsDisplay /></DoctorProtectedRoute>} />
+        <Route path="AppointmentsOverview" element={<DoctorProtectedRoute><AppointmentsOverview /></DoctorProtectedRoute>} />
+        <Route path="AppointmentsDetails" element={<DoctorProtectedRoute><AppointmentsDetails /></DoctorProtectedRoute>} />
+        <Route path="DailySlot" element={<DoctorProtectedRoute><DailySlot /></DoctorProtectedRoute>} />
         {/* <Route path="MonthlySlot" element={<MonthlySlot />} /> */}
-        <Route path="DailyRecurringSlots" element={<DailyRecurringSlots />} />
-        <Route path="WeeklyRecurringSlots" element={<WeeklyRecurringSlots />} />
-        <Route path="PrescriptionScreen" element={<PrescriptionScreen />} />
-        <Route path="MyPatientsScreen" element={<MyPatientsScreen />} />
-        <Route path="MyPatientPrescriptionScreen" element={<MyPatientPrescriptionScreen />} />
-        <Route path="ChatListandRequests" element={<ChatListandRequests />} />
-        <Route path="DoctorSideChat" element={<DoctorSideChat />} />
+        <Route path="DailyRecurringSlots" element={<DoctorProtectedRoute><DailyRecurringSlots /></DoctorProtectedRoute>} />
+        <Route path="WeeklyRecurringSlots" element={<DoctorProtectedRoute><WeeklyRecurringSlots /></DoctorProtectedRoute>} />
+        <Route path="PrescriptionScreen" element={<DoctorProtectedRoute><PrescriptionScreen /></DoctorProtectedRoute>} />
+        <Route path="MyPatientsScreen" element={<DoctorProtectedRoute><MyPatientsScreen /></DoctorProtectedRoute>} />
+        <Route path="MyPatientPrescriptionScreen" element={<DoctorProtectedRoute><MyPatientPrescriptionScreen /></DoctorProtectedRoute>} />
+        <Route path="ChatListandRequests" element={<DoctorProtectedRoute><ChatListandRequests /></DoctorProtectedRoute>} />
+        <Route path="DoctorSideChat" element={<DoctorProtectedRoute><DoctorSideChat /></DoctorProtectedRoute>} />
        
 
         
@@ -135,20 +137,21 @@ const router = createBrowserRouter(
       {/* Admin Routes */}
       <Route path="admin">
         <Route path="login" element={<AdminLoginScreen />} />
-        <Route path="adminHomeScreen" element={<AdminHomeScreen />} />
-        <Route path="adminForgotPasswordScreen" element={<AdminForgotPasswordScreen />} />
-        <Route path="adminResetPasswordScreen" element={<AdminResetPasswordScreen />} />
-        <Route path="DoctorApprovalScreen" element={<DoctorApprovals />} />
-        <Route path="patientListingScreen" element={<PatientListings />} />
-        <Route path="doctorListingScreen" element={<DoctorListings />} />
-        <Route path="doctorProfileScreen" element={<DoctorProfile />} />
-        <Route path="StatisticsPage" element={<StatisticsPage />} />
-        <Route path="TopRevenueDoctorPage" element={<TopRevenueDoctorPage />} />
-        <Route path="TopRatedDoctors" element={<TopRatedDoctors />} />
-        <Route path="TopPatients" element={<TopPatients />} />
-        <Route path="TopBookedDoctors" element={<TopBookedDoctors />} />
-        <Route path="ChartPage" element={<ChartPage />} />
-        <Route path="ReportsPage" element={<ReportsPage />} />
+
+        <Route path="adminHomeScreen" element={<AdminProtectedRoute><AdminHomeScreen /></AdminProtectedRoute>} />
+        <Route path="adminForgotPasswordScreen" element={<AdminProtectedRoute><AdminForgotPasswordScreen /></AdminProtectedRoute>} />
+        <Route path="adminResetPasswordScreen" element={<AdminProtectedRoute><AdminResetPasswordScreen /></AdminProtectedRoute>} />
+        <Route path="DoctorApprovalScreen" element={<AdminProtectedRoute><DoctorApprovals /></AdminProtectedRoute>} />
+        <Route path="patientListingScreen" element={<AdminProtectedRoute><PatientListings /></AdminProtectedRoute>} />
+        <Route path="doctorListingScreen" element={<AdminProtectedRoute><DoctorListings /></AdminProtectedRoute>} />
+        <Route path="doctorProfileScreen" element={<AdminProtectedRoute><DoctorProfile /></AdminProtectedRoute>} />
+        <Route path="StatisticsPage" element={<AdminProtectedRoute><StatisticsPage /></AdminProtectedRoute>} />
+        <Route path="TopRevenueDoctorPage" element={<AdminProtectedRoute><TopRevenueDoctorPage /></AdminProtectedRoute>} />
+        <Route path="TopRatedDoctors" element={<AdminProtectedRoute><TopRatedDoctors /></AdminProtectedRoute>} />
+        <Route path="TopPatients" element={<AdminProtectedRoute><TopPatients /></AdminProtectedRoute>} />
+        <Route path="TopBookedDoctors" element={<AdminProtectedRoute><TopBookedDoctors /></AdminProtectedRoute>} />
+        <Route path="ChartPage" element={<AdminProtectedRoute><ChartPage /></AdminProtectedRoute>} />
+        <Route path="ReportsPage" element={<AdminProtectedRoute><ReportsPage /></AdminProtectedRoute>} />
         
         
       </Route>

@@ -17,9 +17,7 @@ const refreshAccessToken = (req: Request, res: Response) => {
 
         if (decoded && typeof decoded !== 'string') {
             const { userId, role } = decoded as JwtPayload & { userId: string; role: string };
-            console.log(userId,role,'userid in refresh tkem helpoer got it')
             const newAccessToken = generateDoctorAccessToken(userId, role);
-            console.log(newAccessToken,'newAccessToken newwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww');
             return res.status(200).json({ accessToken: newAccessToken });
         }
 

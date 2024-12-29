@@ -85,26 +85,26 @@ const io = new Server(server, {
 });
 // Socket.IO events------------------------------------------------------------------------------------
 io.on('connection', (socket) => {
-    console.log(`Client connected: ${socket.id}`);
-    console.log(`Active clients: ${io.engine.clientsCount}`);
+    // console.log(`Client connected: ${socket.id}`);
+    // console.log(`Active clients: ${io.engine.clientsCount}`);
     // Listen for notification events
     socket.on('sendNotification', (data) => {
-        console.log('Notification received:', data);
+        // console.log('Notification received:', data);
         io.emit('receiveNotification', data);
     });
     //--chat events-------------------------------------------------------------------------------------
     socket.on('joinRoom', ({ patientId, doctorId }) => {
         const room = `${patientId}-${doctorId}`;
         socket.join(room);
-        console.log(`Socket ${socket.id} joined room: ${room}`);
+        // console.log(`Socket ${socket.id} joined room: ${room}`);
     });
     socket.on('leaveRoom', ({ patientId, doctorId }) => {
         const room = `${patientId}-${doctorId}`;
         socket.leave(room);
-        console.log(`Socket ${socket.id} left room: ${room}`);
+        // console.log(`Socket ${socket.id} left room: ${room}`);
     });
     socket.on('sendChatMessage', async (data) => {
-        console.log('Received data:', data);
+        // console.log('Received data:', data);
         try {
             const newMessage = await patientController.sendMessage(data);
             const room = `${data.patientId}-${data.doctorId}`;
@@ -116,8 +116,8 @@ io.on('connection', (socket) => {
         }
     });
     socket.on('disconnect', () => {
-        console.log(`Client disconnected: ${socket.id}`);
-        console.log(`Active clients: ${io.engine.clientsCount}`);
+        // console.log(`Client disconnected: ${socket.id}`);
+        // console.log(`Active clients: ${io.engine.clientsCount}`);
     });
 });
 const PORT = process.env.PORT || 5000;

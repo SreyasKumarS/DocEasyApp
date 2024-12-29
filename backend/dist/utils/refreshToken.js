@@ -14,9 +14,7 @@ const refreshAccessToken = (req, res) => {
             return res.status(403).json({ message: 'Invalid refresh token' });
         if (decoded && typeof decoded !== 'string') {
             const { userId, role } = decoded;
-            console.log(userId, role, 'userid in refresh tkem helpoer got it');
             const newAccessToken = generateDoctorAccessToken(userId, role);
-            console.log(newAccessToken, 'newAccessToken newwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww');
             return res.status(200).json({ accessToken: newAccessToken });
         }
         return res.status(403).json({ message: 'Invalid token payload' });
