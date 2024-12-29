@@ -71,6 +71,8 @@ const ChatWithDoctor: React.FC = () => {
     };
   }, [doctorId, patientId, lastMessage]);
 
+
+  
   useEffect(() => {
     // Scroll to the bottom whenever messages are updated
     if (chatBoxRef.current) {
