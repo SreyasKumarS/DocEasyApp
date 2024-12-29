@@ -1,10 +1,21 @@
+// import { Response } from 'express';
+// import bcrypt from 'bcryptjs';
+// import sendEmail from '../utils/sendEmail.js';
+// import AdminRepository from '../repositories/adminRespository.js';
+// import { generateAdminAccessToken, generateAdminRefreshToken } from '../utils/adminGenerateToken.js';
+// import { IDoctor } from '../models/doctor.js'; 
+// import { log } from 'console';
+// import path from 'path';
 import bcrypt from 'bcryptjs';
 import sendEmail from '../utils/sendEmail.js';
-import AdminRepository from '../repositories/adminRespository.js';
 import { generateAdminAccessToken, generateAdminRefreshToken } from '../utils/adminGenerateToken.js';
-class AdminService {
+export class AdminService {
+    adminRepository;
+    constructor(adminRepository) {
+        this.adminRepository = adminRepository;
+    }
     async verifyOtp(email, otp) {
-        const admin = await AdminRepository.findByEmail(email);
+        const admin = await this.adminRepository.findByEmail(email);
         if (!admin) {
             throw new Error('Admin not found');
         }
@@ -15,10 +26,10 @@ class AdminService {
             throw new Error('OTP expired');
         }
         admin.isVerified = true;
-        await AdminRepository.updateAdmin(admin);
+        await this.adminRepository.updateAdmin(admin);
     }
     async resendOtp(email) {
-        const admin = await AdminRepository.findByEmail(email);
+        const admin = await this.adminRepository.findByEmail(email);
         if (!admin) {
             throw new Error('Admin not found');
         }
@@ -28,13 +39,13 @@ class AdminService {
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         admin.otp = otp;
         admin.otpExpires = new Date(Date.now() + 10 * 60 * 1000);
-        await AdminRepository.updateAdmin(admin);
+        await this.adminRepository.updateAdmin(admin);
         await sendEmail(email, 'OTP Verification', `Your new OTP is ${otp}`);
     }
     async loginAdmin(email, password, res) {
         try {
             // Fetch the admin by email from the database
-            const admin = await AdminRepository.findByEmail(email);
+            const admin = await this.adminRepository.findByEmail(email);
             if (!admin) {
                 console.error('Admin not found:', email);
                 throw new Error('Invalid email or password');
@@ -92,7 +103,7 @@ class AdminService {
     }
     async sendResetOtp(email) {
         try {
-            const admin = await AdminRepository.findByEmail(email);
+            const admin = await this.adminRepository.findByEmail(email);
             if (!admin) {
                 console.error('Admin not found for email:', email);
                 throw new Error('Admin not found');
@@ -100,7 +111,7 @@ class AdminService {
             const otp = Math.floor(100000 + Math.random() * 900000).toString();
             admin.otp = otp;
             admin.otpExpires = new Date(Date.now() + 10 * 60 * 1000);
-            await AdminRepository.updateAdmin(admin);
+            await this.adminRepository.updateAdmin(admin);
             await sendEmail(email, 'OTP Verification', `Your new OTP is ${otp}`);
         }
         catch (error) {
@@ -110,7 +121,7 @@ class AdminService {
     }
     async resetPassword(email, newPassword) {
         try {
-            const admin = await AdminRepository.findByEmail(email);
+            const admin = await this.adminRepository.findByEmail(email);
             if (!admin) {
                 throw new Error('Admin not found');
             }
@@ -127,7 +138,7 @@ class AdminService {
     // Fetch unapproved doctors----------------------------------------------------------------
     async fetchUnapprovedDoctors() {
         try {
-            const unapprovedDoctors = await AdminRepository.findUnapprovedDoctors();
+            const unapprovedDoctors = await this.adminRepository.findUnapprovedDoctors();
             return unapprovedDoctors;
         }
         catch (error) {
@@ -137,12 +148,12 @@ class AdminService {
     }
     async approveDoctor(doctorId) {
         try {
-            const doctor = await AdminRepository.findDoctorById(doctorId);
+            const doctor = await this.adminRepository.findDoctorById(doctorId);
             if (!doctor) {
                 throw new Error('Doctor not found');
             }
             doctor.isApproved = true;
-            await AdminRepository.updateDoctor(doctor);
+            await this.adminRepository.updateDoctor(doctor);
         }
         catch (error) {
             console.error('Error approving doctor:', error);
@@ -151,11 +162,11 @@ class AdminService {
     }
     async deleteDoctor(doctorId) {
         try {
-            const doctor = await AdminRepository.findDoctorById(doctorId);
+            const doctor = await this.adminRepository.findDoctorById(doctorId);
             if (!doctor) {
                 throw new Error('Doctor not found');
             }
-            await AdminRepository.deleteDoctor(doctorId);
+            await this.adminRepository.deleteDoctor(doctorId);
         }
         catch (error) {
             console.error('Error rejecting (deleting) doctor:', error);
@@ -164,7 +175,7 @@ class AdminService {
     }
     async fetchPatientListing() {
         try {
-            const unapprovedDoctors = await AdminRepository.findPatients();
+            const unapprovedDoctors = await this.adminRepository.findPatients();
             return unapprovedDoctors;
         }
         catch (error) {
@@ -174,11 +185,11 @@ class AdminService {
     }
     async deletePatient(patientId) {
         try {
-            const patient = await AdminRepository.findPatientById(patientId);
+            const patient = await this.adminRepository.findPatientById(patientId);
             if (!patient) {
                 throw new Error('Patient not found');
             }
-            await AdminRepository.deletePatient(patientId);
+            await this.adminRepository.deletePatient(patientId);
         }
         catch (error) {
             console.error('Error rejecting (deleting) patient:', error);
@@ -187,12 +198,12 @@ class AdminService {
     }
     async blockDoctor(doctorId) {
         try {
-            const doctor = await AdminRepository.findDoctorById(doctorId);
+            const doctor = await this.adminRepository.findDoctorById(doctorId);
             if (!doctor) {
                 throw new Error('Doctor not found');
             }
             doctor.isApproved = false; // Block the doctor
-            await AdminRepository.updateDoctor(doctor);
+            await this.adminRepository.updateDoctor(doctor);
         }
         catch (error) {
             console.error('Error blocking doctor:', error);
@@ -201,12 +212,12 @@ class AdminService {
     }
     async unblockDoctor(doctorId) {
         try {
-            const doctor = await AdminRepository.findDoctorById(doctorId);
+            const doctor = await this.adminRepository.findDoctorById(doctorId);
             if (!doctor) {
                 throw new Error('Doctor not found');
             }
             doctor.isApproved = true; // Unblock the doctor
-            await AdminRepository.updateDoctor(doctor);
+            await this.adminRepository.updateDoctor(doctor);
         }
         catch (error) {
             console.error('Error unblocking doctor:', error);
@@ -215,7 +226,7 @@ class AdminService {
     }
     async fetchAllDoctors() {
         try {
-            const doctors = await AdminRepository.findAllDoctors();
+            const doctors = await this.adminRepository.findAllDoctors();
             return doctors;
         }
         catch (error) {
@@ -225,7 +236,7 @@ class AdminService {
     }
     async fetchDoctorById(doctorId) {
         try {
-            const doctor = await AdminRepository.findDoctorById(doctorId);
+            const doctor = await this.adminRepository.findDoctorById(doctorId);
             return doctor;
         }
         catch (error) {
@@ -234,7 +245,7 @@ class AdminService {
         }
     }
     async rejectDoctor(doctorId, reason) {
-        const doctor = await AdminRepository.findDoctorById(doctorId);
+        const doctor = await this.adminRepository.findDoctorById(doctorId);
         if (!doctor)
             throw new Error('Doctor not found');
         // Send rejection email using the correct parameters
@@ -243,7 +254,7 @@ class AdminService {
         `Your application has been rejected for the following reason: ${reason}` // text
         );
         // Delete the doctor after sending the email
-        await AdminRepository.deleteDoctor(doctorId);
+        await this.adminRepository.deleteDoctor(doctorId);
     }
     async updatePlatformFee(percentageFee, fixedFee) {
         try {
@@ -255,7 +266,7 @@ class AdminService {
                 throw new Error('Please provide at least one: percentage or fixed money value.');
             }
             // Delegate the update operation to the repository
-            const updatedAdmin = await AdminRepository.updatePlatformFee({ percentageFee, fixedFee });
+            const updatedAdmin = await this.adminRepository.updatePlatformFee({ percentageFee, fixedFee });
             return updatedAdmin;
         }
         catch (error) {
@@ -264,12 +275,12 @@ class AdminService {
         }
     }
     async getTopRevenueDoctor(page, limit) {
-        return await AdminRepository.getTopRevenueDoctor(page, limit);
+        return await this.adminRepository.getTopRevenueDoctor(page, limit);
     }
     async getTopRatedDoctors(page, limit) {
         try {
             // Fetch the doctors and their average ratings
-            const doctorsWithRatings = await AdminRepository.getDoctorsWithRatings();
+            const doctorsWithRatings = await this.adminRepository.getDoctorsWithRatings();
             // Calculate the average rating for each doctor
             const doctorsWithAverageRatings = doctorsWithRatings.map(doctor => {
                 const totalRatings = doctor.reviews.length;
@@ -293,30 +304,32 @@ class AdminService {
         }
     }
     async fetchTopPatients(page, limit) {
-        return await AdminRepository.getTopPatients(page, limit);
+        return await this.adminRepository.getTopPatients(page, limit);
     }
     async fetchTopBookedDoctors(page, limit) {
-        return await AdminRepository.getTopBookedDoctors(page, limit);
+        return await this.adminRepository.getTopBookedDoctors(page, limit);
     }
     ;
     // Service
     async getSpecializationsPieChart() {
         // Get aggregated data from repository
-        const revenueData = await AdminRepository.getRevenueBySpecialization();
+        const revenueData = await this.adminRepository.getRevenueBySpecialization();
         // Prepare response format
         const labels = revenueData.map((item) => item.specialization || 'Unknown');
         const data = revenueData.map((item) => item.totalRevenue);
         return { labels, data };
     }
     async getDoctorsRevenueBarChart() {
-        const revenueData = await AdminRepository.getDoctorsRevenueBarChart();
+        const revenueData = await this.adminRepository.getDoctorsRevenueBarChart();
         const labels = revenueData.map((item) => item.doctorName);
         const data = revenueData.map((item) => item.totalRevenue);
         return { labels, data };
     }
     async generateReport(rangeType, startDate, endDate) {
         const filters = { rangeType, startDate, endDate };
-        return await AdminRepository.getReport(filters);
+        return await this.adminRepository.getReport(filters);
     }
 }
-export default new AdminService();
+// export default new AdminService();
+// const adminService= new AdminService(new AdminService());
+// export default AdminService

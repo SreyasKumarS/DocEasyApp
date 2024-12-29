@@ -1,9 +1,14 @@
-import AdminService from '../services/adminServices.js';
-class AdminController {
+// import { Response, Request, NextFunction } from 'express';
+// import AdminService from '../services/adminServices.js';
+export class AdminController {
+    adminService;
+    constructor(adminService) {
+        this.adminService = adminService;
+    }
     async verifyOtp(req, res, next) {
         const { email, otp } = req.body;
         try {
-            await AdminService.verifyOtp(email, otp);
+            await this.adminService.verifyOtp(email, otp);
             return res.status(201).json({ message: 'Admin verified successfully' });
         }
         catch (error) {
@@ -15,7 +20,7 @@ class AdminController {
     async resendOtp(req, res, next) {
         const { email } = req.body;
         try {
-            await AdminService.resendOtp(email);
+            await this.adminService.resendOtp(email);
             return res.status(200).json({ message: 'OTP resent to your email' });
         }
         catch (error) {
@@ -27,7 +32,7 @@ class AdminController {
     async loginAdmin(req, res, next) {
         const { email, password } = req.body;
         try {
-            const result = await AdminService.loginAdmin(email, password, res);
+            const result = await this.adminService.loginAdmin(email, password, res);
             return res.status(200).json({
                 message: 'Login successful',
                 admin: result.admin,
@@ -42,7 +47,7 @@ class AdminController {
     // Logout Admin
     async logoutAdmin(req, res, next) {
         try {
-            await AdminService.logoutAdmin(res);
+            await this.adminService.logoutAdmin(res);
             return res.status(200).json({ message: 'Logout successful' });
         }
         catch (error) {
@@ -54,7 +59,7 @@ class AdminController {
     async sendAdminResetOtp(req, res, next) {
         const { email } = req.body;
         try {
-            await AdminService.sendResetOtp(email);
+            await this.adminService.sendResetOtp(email);
             return res.status(200).json({ message: 'OTP sent to your email' });
         }
         catch (error) {
@@ -77,7 +82,7 @@ class AdminController {
             return res.status(400).json({ message: 'Passwords do not match' });
         }
         try {
-            await AdminService.resetPassword(email, newPassword);
+            await this.adminService.resetPassword(email, newPassword);
             return res.status(200).json({ message: 'Password reset successful' });
         }
         catch (error) {
@@ -90,7 +95,7 @@ class AdminController {
     // Fetch unapproved doctors
     async fetchUnapprovedDoctors(req, res, next) {
         try {
-            const doctors = await AdminService.fetchUnapprovedDoctors(); // Fetch unapproved doctors from the service
+            const doctors = await this.adminService.fetchUnapprovedDoctors(); // Fetch unapproved doctors from the service
             return res.status(200).json(doctors);
         }
         catch (error) {
@@ -103,7 +108,7 @@ class AdminController {
     async approveDoctor(req, res, next) {
         const { doctorId } = req.params;
         try {
-            await AdminService.approveDoctor(doctorId); // Approve doctor in the service
+            await this.adminService.approveDoctor(doctorId); // Approve doctor in the service
             return res.status(200).json({ message: 'Doctor approved successfully' });
         }
         catch (error) {
@@ -116,7 +121,7 @@ class AdminController {
     async deleteDoctor(req, res, next) {
         const { doctorId } = req.params;
         try {
-            await AdminService.deleteDoctor(doctorId); // Reject doctor in the service
+            await this.adminService.deleteDoctor(doctorId); // Reject doctor in the service
             return res.status(200).json({ message: 'Doctor rejected successfully' });
         }
         catch (error) {
@@ -127,7 +132,7 @@ class AdminController {
     ;
     async fetchPatientListing(req, res, next) {
         try {
-            const doctors = await AdminService.fetchPatientListing(); // Fetch unapproved doctors from the service
+            const doctors = await this.adminService.fetchPatientListing(); // Fetch unapproved doctors from the service
             return res.status(200).json(doctors);
         }
         catch (error) {
@@ -139,7 +144,7 @@ class AdminController {
     async deletePatient(req, res, next) {
         const { patientId } = req.params;
         try {
-            await AdminService.deletePatient(patientId);
+            await this.adminService.deletePatient(patientId);
             return res.status(200).json({ message: 'Doctor rejected successfully' });
         }
         catch (error) {
@@ -151,7 +156,7 @@ class AdminController {
     async blockDoctor(req, res, next) {
         const { doctorId } = req.params;
         try {
-            await AdminService.blockDoctor(doctorId);
+            await this.adminService.blockDoctor(doctorId);
             return res.status(200).json({ message: 'Doctor blocked successfully' });
         }
         catch (error) {
@@ -164,7 +169,7 @@ class AdminController {
     async unblockDoctor(req, res, next) {
         const { doctorId } = req.params;
         try {
-            await AdminService.unblockDoctor(doctorId);
+            await this.adminService.unblockDoctor(doctorId);
             return res.status(200).json({ message: 'Doctor unblocked successfully' });
         }
         catch (error) {
@@ -176,7 +181,7 @@ class AdminController {
     // Fetch all doctors
     async fetchAllDoctors(req, res, next) {
         try {
-            const doctors = await AdminService.fetchAllDoctors();
+            const doctors = await this.adminService.fetchAllDoctors();
             return res.status(200).json(doctors);
         }
         catch (error) {
@@ -191,7 +196,7 @@ class AdminController {
             if (!doctorId) {
                 return res.status(400).json({ error: 'Doctor ID is required' });
             }
-            const doctor = await AdminService.fetchDoctorById(doctorId);
+            const doctor = await this.adminService.fetchDoctorById(doctorId);
             if (!doctor) {
                 return res.status(404).json({ error: 'Doctor not found' });
             }
@@ -207,7 +212,7 @@ class AdminController {
         const { doctorId } = req.params;
         const { reason } = req.body;
         try {
-            await AdminService.rejectDoctor(doctorId, reason);
+            await this.adminService.rejectDoctor(doctorId, reason);
             return res.status(200).json({ message: 'Doctor rejected and notified successfully' });
         }
         catch (error) {
@@ -225,7 +230,7 @@ class AdminController {
                     message: 'Please provide only one: either percentage or fixed money value.',
                 });
             }
-            const updatedFee = await AdminService.updatePlatformFee(percentageFee, fixedFee);
+            const updatedFee = await this.adminService.updatePlatformFee(percentageFee, fixedFee);
             if (!updatedFee) {
                 return res.status(404).json({ message: 'Admin record not found.' });
             }
@@ -246,7 +251,7 @@ class AdminController {
         try {
             const page = parseInt(req.query.page, 10) || 1;
             const limit = parseInt(req.query.limit, 10) || 10;
-            const data = await AdminService.getTopRevenueDoctor(page, limit);
+            const data = await this.adminService.getTopRevenueDoctor(page, limit);
             res.status(200).json({ success: true, data });
         }
         catch (error) {
@@ -258,7 +263,7 @@ class AdminController {
     async getTopRatedDoctors(req, res) {
         const { page, limit } = req.query;
         try {
-            const result = await AdminService.getTopRatedDoctors(parseInt(page), parseInt(limit));
+            const result = await this.adminService.getTopRatedDoctors(parseInt(page), parseInt(limit));
             return res.json(result);
         }
         catch (error) {
@@ -271,7 +276,7 @@ class AdminController {
         try {
             const page = parseInt(req.query.page, 10) || 1;
             const limit = parseInt(req.query.limit, 10) || 10;
-            const data = await AdminService.fetchTopPatients(page, limit);
+            const data = await this.adminService.fetchTopPatients(page, limit);
             res.status(200).json({ success: true, data });
         }
         catch (error) {
@@ -283,7 +288,7 @@ class AdminController {
     async getTopBookedDoctors(req, res) {
         const { page = 1, limit = 10 } = req.query;
         try {
-            const result = await AdminService.fetchTopBookedDoctors(Number(page), Number(limit));
+            const result = await this.adminService.fetchTopBookedDoctors(Number(page), Number(limit));
             res.status(200).json(result);
         }
         catch (error) {
@@ -295,7 +300,7 @@ class AdminController {
     // Controller
     async getSpecializationsPieChart(req, res) {
         try {
-            const revenueData = await AdminService.getSpecializationsPieChart();
+            const revenueData = await this.adminService.getSpecializationsPieChart();
             res.status(200).json(revenueData);
         }
         catch (error) {
@@ -306,7 +311,7 @@ class AdminController {
     ;
     async getDoctorsRevenueBarChart(req, res) {
         try {
-            const revenueData = await AdminService.getDoctorsRevenueBarChart();
+            const revenueData = await this.adminService.getDoctorsRevenueBarChart();
             res.status(200).json(revenueData);
         }
         catch (error) {
@@ -318,7 +323,7 @@ class AdminController {
     async getReport(req, res) {
         try {
             const { rangeType, startDate, endDate } = req.body;
-            const reportData = await AdminService.generateReport(rangeType, startDate, endDate);
+            const reportData = await this.adminService.generateReport(rangeType, startDate, endDate);
             res.status(200).json(reportData);
         }
         catch (error) {
@@ -328,4 +333,4 @@ class AdminController {
     }
     ;
 }
-export default new AdminController();
+// export default new AdminController();

@@ -2,7 +2,7 @@ import Admin from '../models/admin.js';
 import Doctor from '../models/doctor.js';
 import Patient from '../models/patient.js';
 import Booking from '../models/booking.js';
-class AdminRepository {
+export class AdminRepository {
     async findByEmail(email) {
         return Admin.findOne({ email });
     }
@@ -341,7 +341,7 @@ class AdminRepository {
                 endDate: endDate || 'N/A',
                 totalSlots,
                 totalRevenue: totalRevenue[0]?.totalRevenue || 0,
-                doctorRevenue, // Return the list of doctors with their total revenue
+                doctorRevenue,
             };
         }
         catch (error) {

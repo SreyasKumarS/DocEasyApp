@@ -3,7 +3,7 @@ import Doctor, { IDoctor } from '../models/doctor.js';
 import Patient from '../models/patient.js';
 import Booking from '../models/booking.js';
 
-class AdminRepository {
+export class AdminRepository {
   
   async findByEmail(email: string) {
     return Admin.findOne({ email });
@@ -410,7 +410,7 @@ async getReport({
       endDate: endDate || 'N/A',
       totalSlots,
       totalRevenue: totalRevenue[0]?.totalRevenue || 0,
-      doctorRevenue, // Return the list of doctors with their total revenue
+      doctorRevenue, 
     };
   } catch (error) {
     console.error('Error in RevenueService.getReport:', error);
@@ -419,7 +419,19 @@ async getReport({
 }
 
 
-
 }
 
+
+
 export default new AdminRepository();
+
+
+
+
+
+
+
+
+
+
+
