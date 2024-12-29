@@ -87,41 +87,51 @@ const PatientPrescriptionScreen = () => {
       >
         <h1 className="text-center text-primary mb-4">Prescription Details</h1>
     
-        {/* Appointment Information Section */}
-        <div className="p-3 mb-4" style={{ border: "1px solid #ddd", borderRadius: "10px" }}>
-          <h5 className="text-secondary mb-3">
-            <FaClipboardList className="me-2 text-primary" />
-            Appointment Information
-          </h5>
-          <div className="fs-5 text-dark">
-            <p>
-              <strong>Patient Name:</strong> {patientName}
-            </p>
-            <p>
+      {/* Appointment Information Section */}
+<div
+  className="p-4 mb-4"
+  style={{
+    border: "1px solid #ddd",
+    borderRadius: "10px",
+    backgroundColor: "#f9f9f9",
+  }}
+>
+  <h5 className="text-secondary mb-3">
+    <FaClipboardList className="me-2 text-primary" />
+    Appointment Information
+  </h5>
+  <div className="row">
+    <div className="col-md-6">
+      <p className="fs-6 mb-3">
+        <strong>Patient Name:</strong> {patientName}
+      </p>
+      <p className="fs-6 mb-3">
+        <strong>Doctor Name:</strong> {doctorName}
+      </p>
+      <p className="fs-6 mb-3">
+        <strong>Specialization:</strong> {specialization}
+      </p>
+      <p className="fs-6 mb-3">
+        <strong>Experience:</strong> {experience} years
+      </p>
+    </div>
+    <div className="col-md-6">
+      <p className="fs-6 mb-3">
+        <strong>Clinic Address:</strong> {clinicAddress}
+      </p>
+      <p className="fs-6 mb-3">
+        <strong>Locality:</strong> {locality}
+      </p>
+      <p className="fs-6 mb-3">
+        <strong>Slot Time:</strong> {formatTime(slotTime)}
+      </p>
+      <p className="fs-6 mb-3">
+        <strong>Slot Date:</strong> {date}
+      </p>
+    </div>
+  </div>
+</div>
 
-              <strong>Doctor Name:</strong> {doctorName}
-            </p>
-            <p>
-              <strong>Specialization:</strong> {specialization}
-            </p>
-            <p>
-  
-              <strong>Clinic Address:</strong> {clinicAddress}
-            </p>
-            <p>
-              <strong>Locality:</strong> {locality}
-            </p>
-            <p>
-              <strong>Experience:</strong> {experience}
-            </p>
-            <p>
-              <strong>Slot Time:</strong> {formatTime(slotTime)}
-            </p>
-            <p>
-              <strong>Slot Date:</strong> {date}
-            </p>
-          </div>
-        </div>
     
         {/* Prescription Section */}
         <div className="p-3 mb-4" style={{ border: "1px solid #ddd", borderRadius: "10px" }}>
