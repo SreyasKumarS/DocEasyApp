@@ -214,31 +214,123 @@ const DoctorSlots = () => {
 
   return (
     <Container className="py-4">
-      <h2>Available Slots</h2>
+   <h1 
+  className="text-center mb-4" 
+  style={{
+    color: '#007BFF', // Bootstrap primary blue color
+    fontFamily: 'Poppins, Arial, sans-serif', // Stylish font
+    fontWeight: 600, // Bold styling
+    textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)', 
+    letterSpacing: '1px', // Slightly increased spacing
+    lineHeight: '1.5', // Better readability
+  }}
+>
+  Book Your Slots with Ease
+</h1>
+<div style={{ textAlign: 'left', marginBottom: '1rem' }}>
+<h2 
+    className="mb-3" 
+    style={{ 
+      color: '#007BFF', 
+      fontWeight: 600, /* Semi-bold */
+      fontSize: '1.25rem' /* Medium font size (approximately 20px) */
+    }}
+  >
+    Pick a Date and See Available Slots
+  </h2>
+  </div>
       <DatePicker
         selected={selectedDate}
         onChange={(date: Date | null) => date && setSelectedDate(date)}
         dateFormat="yyyy-MM-dd"
+        minDate={new Date()}
         className="form-control mb-3"
       />
       <Row className="mt-3">
         {slots.length === 0 ? (
           <Col>
-            <p>No available slots for this date.</p>
+           <h3 className="text-muted">Oops! No slots available for the selected date.</h3>
+           <p className="text-muted">Try choosing a different date to find the perfect slot for you.</p>
           </Col>
         ) : (
           slots.map((slot) => (
             <Col key={slot._id} md={4} className="mb-3">
-              <Card>
+              <Card
+                style={{
+                  borderRadius: '10px',
+                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                  overflow: 'hidden',
+                }}
+                className="h-100"
+              >
+                <Card.Header
+                  style={{
+                    backgroundColor: '#007BFF',
+                    color: 'white',
+                    fontSize: '1.2rem',
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                  }}
+                >
+                  {formatDate(slot.date)}
+                </Card.Header>
                 <Card.Body>
-                  <Card.Title>
-                    Date: {formatDate(slot.date)} <br />
-                    Time: {new Date(slot.startTime).toLocaleTimeString()} -{' '}
-                    {new Date(slot.endTime).toLocaleTimeString()}
-                  </Card.Title>
-                  <Card.Text>Status: {slot.status === 'available' ? 'Available' : 'Booked'}</Card.Text>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: '1rem',
+                    }}
+                  >
+                    <span style={{ fontWeight: 'bold', fontSize: '1rem', color: '#333' }}>
+                      Time:
+                    </span>
+                    <span style={{ fontSize: '1rem', color: '#555' }}>
+                      {new Date(slot.startTime).toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true,
+                      })}{' '}
+                      -{' '}
+                      {new Date(slot.endTime).toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true,
+                      })}
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: '1rem',
+                    }}
+                  >
+                    <span style={{ fontWeight: 'bold', fontSize: '1rem', color: '#333' }}>
+                      Status:
+                    </span>
+                    <span
+                      style={{
+                        fontSize: '1rem',
+                        color: slot.status === 'available' ? 'green' : 'red',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      {slot.status === 'available' ? 'Available' : 'Booked'}
+                    </span>
+                  </div>
                   <Button
-                    variant="success"
+                    style={{
+                      backgroundColor: '#009266',
+                      display: 'block',
+                      margin: '0 auto',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '5px',
+                      border: 'none',
+                      cursor: slot.status === 'available' ? 'pointer' : 'not-allowed',
+                    }}
                     onClick={() => handleBookNow(slot)}
                     disabled={slot.status !== 'available'}
                   >
@@ -247,6 +339,7 @@ const DoctorSlots = () => {
                 </Card.Body>
               </Card>
             </Col>
+
           ))
         )}
       </Row>

@@ -64,6 +64,10 @@ const Specializations = () => {
     navigate('/patient/DoctorsList', { state: { specialization: spec.name } });
   };
 
+  const handleDoctorClick = (doctorId: string) => {
+    navigate('/patient/DoctorDetailsPagePatient', { state: { doctorId } });
+  };
+
   return (
     <Container className="py-4">
     <h2>Specializations</h2>
@@ -122,30 +126,68 @@ const Specializations = () => {
           ))
         ) : filteredDoctors.length > 0 ? (
           filteredDoctors.map((doctor) => (
-            <Col key={doctor._id} md={4} className="mb-3">
-              <Card
-                onClick={() => handleSpecializationClick(doctor)}
-                style={{ cursor: 'pointer' }}
-                className="shadow-sm h-100"
-              >
-                <Card.Img
-                  variant="top"
-                  src={`${doctor.profilePicture}`}
-                  alt={`${doctor.name}'s profile`}
-                  style={{ height: '200px', objectFit: 'cover' }}
-                />
-                <Card.Body>
-                  <Card.Title>{doctor.name}</Card.Title>
-                  <Card.Text>
-                    <strong>Experience:</strong> {doctor.experience} years <br />
-                    <strong>Specialization:</strong> {doctor.specialization} <br />
-                    <strong>Contact:</strong> {doctor.contactNumber} <br />
-                    <strong>Clinic:</strong> {doctor.clinicAddress} <br />
-                    <strong>Locality:</strong> {doctor.locality} <br />
-                  </Card.Text>
-                </Card.Body>
-              </Card>
-            </Col>
+            <Col key={doctor._id} md={6} lg={4} className="mb-3">
+  <Card
+    onClick={() =>  handleDoctorClick(doctor._id)}
+    style={{
+      cursor: 'pointer',
+      borderRadius: '10px',
+      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+      overflow: 'hidden',
+      transition: 'transform 0.3s ease',
+    }}
+    className="h-100"
+  >
+    {/* Profile Picture */}
+    <div style={{ position: 'relative', height: '300px', overflow: 'hidden' }}>
+      <Card.Img
+        variant="top"
+        src={doctor.profilePicture}
+        alt={`${doctor.name}'s profile`}
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          objectPosition: 'top',
+          filter: 'brightness(0.95)',
+        }}
+      />
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          color: 'white',
+          padding: '10px',
+          fontSize: '1rem',
+          fontWeight: 'bold',
+          textAlign: 'center',
+        }}
+      >
+        {doctor.name}
+      </div>
+    </div>
+
+    {/* Card Body */}
+    <Card.Body
+      style={{
+        padding: '15px',
+        backgroundColor: '#f9f9f9',
+      }}
+    >
+      <Card.Text style={{ color: '#333', lineHeight: '1.6', fontSize: '0.85rem' }}>
+        <strong style={{ color: '#007BFF' }}>Experience:</strong> {doctor.experience} years <br />
+        <strong style={{ color: '#007BFF' }}>Specialization:</strong> {doctor.specialization} <br />
+        <strong style={{ color: '#007BFF' }}>Contact:</strong> {doctor.contactNumber} <br />
+        <strong style={{ color: '#007BFF' }}>Clinic:</strong> {doctor.clinicAddress} <br />
+        <strong style={{ color: '#007BFF' }}>Locality:</strong> {doctor.locality}
+      </Card.Text>
+    </Card.Body>
+  </Card>
+</Col>
+
           ))
         ) : (
           <p>No doctors found with the given criteria.</p>

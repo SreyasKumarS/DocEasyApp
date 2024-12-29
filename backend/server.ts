@@ -14,7 +14,6 @@ import connectDB from './config/db.js';
 import patientRoutes from './routes/patientRoutes.js';
 import doctorRoutes from './routes/doctorRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
-// import {sendMessage}  from './controllers/patientController.js'; 
 import {PatientController} from './controllers/patientController.js';
 import { PatientService } from './services/patientService.js';
 import { PatientRepository } from './repositories/patientRespository.js'
