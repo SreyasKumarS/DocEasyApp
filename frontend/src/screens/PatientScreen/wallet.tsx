@@ -136,38 +136,45 @@ const [totalPages, setTotalPages] = useState(1);
 
 
       {/* Transactions Table */}
-      <h3>Transactions</h3>
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Date & Time</th>
-            <th>Type</th>
-            <th>Debit / Credit</th>
-            <th>Amount</th>
-            <th>Status</th>
-            <th>Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          {transactions.map((transaction) => (
-            <tr key={transaction._id}>
-              <td>{new Date(transaction.createdAt).toLocaleString()}</td>
-              <td>{transaction.type}</td>
-              <td>
-                {transaction.type === 'recharge' || transaction.type === 'refund'
-                  ? 'credit'
-                  : transaction.type === 'no refund'
-                  ? 'null'
-                  : 'debit'}
-              </td>
-
-              <td>₹{transaction.amount.toFixed(2)}</td>
-              <td>{transaction.status}</td>
-              <td>{transaction.description}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+{/* Transactions Table */}
+<h3 className="my-4 text-center" style={{ color: '#6c757d', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+  Transaction History
+</h3>
+      <table className="table table-hover table-striped table-bordered align-middle">
+        <thead className="table-primary">
+    <tr>
+      <th className="text-center">Date & Time</th>
+      <th className="text-center">Type</th>
+      <th className="text-center">Debit / Credit</th>
+      <th className="text-center">Amount</th>
+      <th className="text-center">Status</th>
+      <th className="text-center">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    {transactions.map((transaction) => (
+      <tr key={transaction._id}>
+        <td className="text-center">
+          {new Date(transaction.createdAt).toLocaleDateString('en-GB')},{' '}
+          {new Date(transaction.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
+        </td>
+        <td className="text-center">{transaction.type}</td>
+        <td className="text-center">
+          {transaction.type === 'recharge' || transaction.type === 'refund'
+            ? 'Credit'
+            : transaction.type === 'no refund'
+            ? 'Null'
+            : 'Debit'}
+        </td>
+        <td className="text-center">₹{transaction.amount.toFixed(2)}</td>
+        <td className={`text-center ${transaction.status === 'successful' ? 'text-success' : 'text-danger'}`}>
+          {transaction.status}
+        </td>
+        <td className="text-center">{transaction.description}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>
 
 
 

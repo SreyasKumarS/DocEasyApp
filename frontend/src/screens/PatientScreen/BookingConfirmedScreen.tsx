@@ -98,7 +98,7 @@ const BookedAppointmentsScreen: React.FC = () => {
             <tr>
               <th>Index</th>
               <th>Date</th>
-              <th>Time</th>
+              <th>Slot Time</th>
               <th>Doctor Name</th>
               <th>Clinic Address</th>
               <th>Locality</th>
