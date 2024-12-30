@@ -74,9 +74,51 @@ const DoctorHomeScreen: React.FC = () => {
         </Col>
 
         {/* Main Content */}
+
+        
         <Col md={10}>
+{/* Separate Container for DocEasy Description Section */}
+{/* Separate Container for DocEasy Description Section */}
+<Container fluid className="py-5">
+  <Container>
+    {/* Image as Banner */}
+    <Row className="mb-4">
+      <Col className="text-center">
+        <img
+          src="/assets/medical-banner-with-doctor-patient.jpg" // Replace with a relevant image URL
+          alt="DocEasy Banner"
+          className="img-fluid shadow-lg"
+          style={{
+            width: '100%',
+            height: 'auto',
+            maxHeight: '400px', // Limit the height for a banner-like appearance
+            objectFit: 'cover',
+            borderRadius: '10px',
+          }}
+        />
+      </Col>
+    </Row>
+
+    {/* Description Section */}
+    <Row className="text-center text-md-start">
+      <Col md={12}>
+        <div>
+          <h2 className="text-center mb-3" style={{ color: '#3A9F98' }}>About DocEasy</h2> {/* Teal title for a fresh look */}
+          <p style={{ fontSize: '1.1rem', lineHeight: '1.8', textAlign: 'justify', color: '#2c2c2c' }}>
+            At <strong style={{ color: '#000' }}>DocEasy</strong>, we aim to simplify healthcare by connecting patients with 
+            experienced doctors. Whether it's scheduling appointments, managing career slots, or 
+            accessing specialized care, we ensure convenience and ease for both patients and doctors. 
+            Join us to experience seamless healthcare management!
+          </p>
+        </div>
+      </Col>
+    </Row>
+  </Container>
+</Container>
           <Container>
-            <h1 className="mb-4 text-center text-white">Welcome, {doctorProfile?.name}</h1>
+          <h1 className="mb-4 text-center" style={{ color: '#3A9F98', fontWeight: 'bold' }}>
+    Welcome, Dr. {doctorProfile?.name}
+  </h1>
             <Row>
               {/* Profile Card */}
               <Col md={12} className="mb-4">
@@ -88,10 +130,17 @@ const DoctorHomeScreen: React.FC = () => {
               <img
                 src={doctorProfile?.profilePicture} // This should be the S3 URL
                 alt={`${doctorProfile?.name}'s Profile`}
-                className="img-fluid rounded-circle shadow-sm mb-3"
-                style={{ width: '150px', height: '150px', objectFit: 'cover', border: '3px solid #3A9F98' }}
+                className="img-fluid shadow-sm mb-3"
+                style={{
+                  width: '350px',
+                  height: '450px',
+                  objectFit: 'cover',
+                  border: '3px solid #3A9F98',
+                  borderRadius: '10px', // Slight rounding for a professional look
+                }}
               />
             </Col>
+
 
             {/* Details Column */}
             <Col md={8}>
