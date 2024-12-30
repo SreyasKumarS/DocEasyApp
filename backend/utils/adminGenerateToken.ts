@@ -8,7 +8,7 @@ dotenv.config();
 const generateAdminAccessToken = (adminId: string): string => {
     const jwtSecret = process.env.JWT_SECRET;
     if (!jwtSecret) throw new Error('JWT_SECRET is not defined in the environment variables');
-    return jwt.sign({ userId: adminId, role: 'admin' }, jwtSecret, { expiresIn: '15m' }); // Short-lived token
+    return jwt.sign({ userId: adminId, role: 'admin' }, jwtSecret, { expiresIn: '80m' }); // Short-lived token
 };
 
 // Function to generate and store the refresh token in a cookie

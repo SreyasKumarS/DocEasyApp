@@ -9,7 +9,7 @@ const generatePatientAccessToken = (userId: string, role: string): string => {
     const jwtSecret = process.env.JWT_SECRET;
     if (!jwtSecret) throw new Error('JWT_SECRET is not defined in the environment variables');
 
-    return jwt.sign({ userId, role }, jwtSecret, { expiresIn: '15m' }); // Short-lived token (30 minutes)
+    return jwt.sign({ userId, role }, jwtSecret, { expiresIn: '80m' }); // Short-lived token (30 minutes)
 };
 
 // Generate Patient Refresh Token
