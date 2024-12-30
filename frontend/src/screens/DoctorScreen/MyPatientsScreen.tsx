@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import api from '../../axios'
+import api from '../../axios';
 import { useNavigate } from 'react-router-dom';
-import { Table, Button, Container } from 'react-bootstrap';
-import {MyPatientsScreen} from '../../../interfaces/doctorInterfaces'
-
+import { Table, Button, Container, Pagination } from 'react-bootstrap';
+import { MyPatientsScreen } from '../../../interfaces/doctorInterfaces';
 
 const PatientsScreen: React.FC = () => {
-  const [patients, setPatients] = useState<MyPatientsScreen[]>([]); // Use Patient[] as the type
+  const [patients, setPatients] = useState<MyPatientsScreen[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const patientsPerPage = 5; // Number of records per page
   const navigate = useNavigate();
 
   // Fetch completed bookings on component load
   useEffect(() => {
     api
-      .get<MyPatientsScreen[]>('/doctor/getCompletedBookings') 
+      .get<MyPatientsScreen[]>('/doctor/getCompletedBookings')
       .then((response) => setPatients(response.data))
       .catch((error) =>
         console.error('Error fetching completed bookings:', error)
@@ -31,18 +32,32 @@ const PatientsScreen: React.FC = () => {
 
   // Handle View Prescription button click
   const viewPrescription = (patient: MyPatientsScreen): void => {
-  
-    // Navigate to MyPatientPrescriptionScreen with patient details
     navigate('/doctor/MyPatientPrescriptionScreen', {
-      state: {  bookingId: patient.id, // Ensure this value is valid
+      state: {
+        bookingId: patient.id,
         patientName: patient.patientName,
         contactNumber: patient.contactNumber,
         slotStartTime: patient.slotStartTime,
         slotEndTime: patient.slotEndTime,
-        date: patient.date},
+        date: patient.date,
+      },
     });
   };
-  
+
+  // Pagination calculations
+  const indexOfLastPatient = currentPage * patientsPerPage;
+  const indexOfFirstPatient = indexOfLastPatient - patientsPerPage;
+  const currentPatients = patients
+    .slice()
+    .sort((a, b) => new Date(b.date as string).getTime() - new Date(a.date as string).getTime())
+    .slice(indexOfFirstPatient, indexOfLastPatient);
+
+  const totalPages = Math.ceil(patients.length / patientsPerPage);
+
+  // Change page
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
 
   return (
     <Container>
@@ -59,25 +74,21 @@ const PatientsScreen: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-        {patients
-          .slice()
-          .sort((a, b) => new Date(b.date as string).getTime() - new Date(a.date as string).getTime()) // Use `getTime` for numeric comparison
-          .map((patient, index) => (
+          {currentPatients.map((patient, index) => (
             <tr key={patient.id}>
-              <td>{index + 1}</td>
+              <td>{indexOfFirstPatient + index + 1}</td>
               <td>{patient.patientName}</td>
               <td>{patient.contactNumber}</td>
               <td>
-                {formatTime(patient.slotStartTime)} to{' '}
-                {formatTime(patient.slotEndTime)}
+                {formatTime(patient.slotStartTime)} to {formatTime(patient.slotEndTime)}
               </td>
               <td>
-          {new Date(patient.date).toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: '2-digit',
-            year: '2-digit',
-          })}
-        </td>
+                {new Date(patient.date).toLocaleDateString('en-GB', {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: '2-digit',
+                })}
+              </td>
               <td>
                 <Button
                   variant="primary"
@@ -90,6 +101,18 @@ const PatientsScreen: React.FC = () => {
           ))}
         </tbody>
       </Table>
+      {/* Pagination Component */}
+      <Pagination className="justify-content-center">
+        {Array.from({ length: totalPages }, (_, index) => (
+          <Pagination.Item
+            key={index + 1}
+            active={index + 1 === currentPage}
+            onClick={() => handlePageChange(index + 1)}
+          >
+            {index + 1}
+          </Pagination.Item>
+        ))}
+      </Pagination>
     </Container>
   );
 };

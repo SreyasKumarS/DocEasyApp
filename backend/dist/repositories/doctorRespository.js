@@ -670,7 +670,6 @@ export class DoctorRepository {
         return updatedBooking; // Return the updated booking
     }
     async getCompletedBookings() {
-        ('hit repooo ');
         return await Booking.find({ bookingStatus: 'completed' })
             .populate('patientId', 'name contactNumber') // Populate only required fields from Patient
             .populate('slotId', 'startTime endTime date') // Use lowercase field names as per schema
