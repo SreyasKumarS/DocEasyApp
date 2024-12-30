@@ -67,16 +67,6 @@ const PrescriptionPage: React.FC = () => {
     <Container className="mt-4">
       <h2>Add Prescription</h2>
       <Form>
-        <Form.Group controlId="formPatientId" className="mb-3">
-          <Form.Label>Patient ID</Form.Label>
-          <Form.Control type="text" value={prescription.patientId} readOnly disabled />
-        </Form.Group>
-
-        <Form.Group controlId="formDoctorId" className="mb-3">
-          <Form.Label>Doctor ID</Form.Label>
-          <Form.Control type="text" value={prescription.doctorId} readOnly disabled />
-        </Form.Group>
-
         <Form.Group controlId="formDiagnosis" className="mb-3">
           <Form.Label>Diagnosis</Form.Label>
           <Form.Control
