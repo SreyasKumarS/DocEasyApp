@@ -13,6 +13,8 @@ const BookedAppointmentsScreen: React.FC = () => {
   const [appointments, setAppointments] = useState<BookingConfirmedScreen[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState<BookingConfirmedScreen | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [appointmentsPerPage] = useState(10); 
 
   // Fetch the booked appointments
   const fetchBookedAppointments = async () => {
@@ -20,12 +22,26 @@ const BookedAppointmentsScreen: React.FC = () => {
       const response = await api.get(
         `/patients/getBookedAppointments/${patientId}`
       );
+      const sortedAppointments = response.data.appointments.sort((a: BookingConfirmedScreen, b: BookingConfirmedScreen) => 
+        new Date(b.date).getTime() - new Date(a.date).getTime()
+      );
       setAppointments(response.data.appointments);
     } catch (error) {
       console.error('Error fetching booked appointments:', error);
     }
   };
  
+
+   // Pagination logic
+   const indexOfLastAppointment = currentPage * appointmentsPerPage;
+   const indexOfFirstAppointment = indexOfLastAppointment - appointmentsPerPage;
+   const currentAppointments = appointments.slice(indexOfFirstAppointment, indexOfLastAppointment);
+ 
+   // Handle page change
+   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+ 
+   // Calculate total pages
+   const totalPages = Math.ceil(appointments.length / appointmentsPerPage);
   
 
   // Open the confirmation modal
@@ -92,20 +108,26 @@ const BookedAppointmentsScreen: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {appointments.map((appointment, index) => (
+          {currentAppointments.map((appointment, index) => (
               <tr key={appointment._id}>
-                <td>{index + 1}</td>
-                <td>{new Date(appointment.date).toLocaleDateString()}</td>
+                <td style={{ padding: '15px 18px' }}>{indexOfFirstAppointment + index + 1}</td>
+                <td style={{ padding: '15px 18px' }}>{new Date(appointment.date).toLocaleDateString('en-GB')}</td>
                 <td>
-                  {new Date(appointment.startTime).toLocaleTimeString()} -{' '}
-                  {new Date(appointment.endTime).toLocaleTimeString()}
+                <td>
+                  {new Date(appointment.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })} -{' '}
+                  {new Date(appointment.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
+                </td>
                 </td>
                 <td>{appointment.doctorName}</td>
                 <td>{appointment.clinicAddress}</td>
                 <td>{appointment.locality}</td>
                 <td>
-                  {appointment.bookingStatus === 'confirmed' ? 'Confirmed' : 'Cancelled'}
-                </td>
+                {appointment.bookingStatus === 'confirmed' 
+                  ? 'Confirmed' 
+                  : appointment.bookingStatus === 'completed' 
+                    ? 'Completed' 
+                    : 'Cancelled'}
+              </td>
                 <td>{appointment.amount}</td>
                 <td>
                   {appointment.status === 'booked' &&
@@ -127,6 +149,25 @@ const BookedAppointmentsScreen: React.FC = () => {
         <p className="text-center">No booked appointments found.</p>
       )}
 
+
+  {/* Pagination Controls */}
+      <div className="d-flex justify-content-center mt-3">
+        <Button
+          variant="secondary"
+          onClick={() => paginate(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </Button>
+        <span className="mx-3">Page {currentPage} of {totalPages}</span>
+        <Button
+          variant="secondary"
+          onClick={() => paginate(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </Button>
+      </div>
       {/* Confirmation Modal */}
       <Modal show={showModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>

@@ -1,98 +1,3 @@
-// import { Router } from 'express';
-// import authenticateUser from '../middleware/authMiddleware.js'
-// import {
-//     registerPatient,
-//     verifyOtp,
-//     resendOtp,
-//     loginPatient,
-//     logoutPatient,
-//     sendResetOtp,
-//     resetPassword,
-//     getPatientDetails,
-//     PatientProfileEdit,
-//     getSpecializations,
-//     getDoctorsBySpecialization,
-//     getSlots,
-//     googleLogin,
-//     getNearbyDoctors,
-//     search,
-//     createOrder,
-//     confirmPayment,
-//     getBookedAppointments,
-//     cancelAppointment,
-//     createWalletRechargeOrder,
-//     rechargeWallet,
-//     confirmWalletPayment,
-//     getWalletDetails,
-//     getPlatformFee,
-//     getConsultationFee,
-//     getNotifications,
-//     updateNotificationStatus,
-//     getDoctorDetailsForPatient,
-//     submitReview,
-//     getReviews,
-//     getDoctorAverageRating,
-//     getDoctorAverageRatingformultipleDoctors, 
-//     getBookingDetailsforSuccessPage,
-//     getAppointmentHistory,
-//     getChatHistory
-
-   
-// } from '../controllers/patientController.js';
-
-
-// const router = Router();
-// router.post('/register', registerPatient);
-// router.post('/verify-otp', verifyOtp);
-// router.post('/resend-otp', resendOtp);
-// router.post('/login', loginPatient);
-// router.post('/logout', logoutPatient);
-// router.post('/sendResetOtp', sendResetOtp);
-// router.post('/ResetPassword',resetPassword);
-
-// router.get('/getPatientDetails/:patientId',authenticateUser,getPatientDetails);
-// router.put('/PatientProfileEdit/:patientId',authenticateUser,PatientProfileEdit)
-// router.get('/specializations',authenticateUser, getSpecializations);
-// router.get('/getDoctorsBySpecialization/:specialization',authenticateUser,getDoctorsBySpecialization);
-// router.get('/getSlots/:doctorId/:date',authenticateUser, getSlots);
-// router.post('/googlelogin',googleLogin);
-// router.get('/getNearbyDoctors/:patientId',getNearbyDoctors);
-// router.get('/search',authenticateUser,search);
-// router.post('/createOrder',authenticateUser,createOrder);
-// router.post('/confirmPayment',authenticateUser, confirmPayment); 
-// router.get('/getBookedAppointments/:patientId',authenticateUser,getBookedAppointments);
-// router.put('/cancelAppointment',authenticateUser, cancelAppointment);
-// router.post('/createWalletRechargeOrder',authenticateUser, createWalletRechargeOrder);
-// router.post('/rechargeWallet',authenticateUser, rechargeWallet);
-// router.post('/confirmWalletPayment',authenticateUser, confirmWalletPayment);
-// router.get('/getWalletDetails/:patientId',authenticateUser,getWalletDetails);
-// router.get('/getPlatformFee',getPlatformFee);
-// router.get('/getConsultationFee/:doctorId',getConsultationFee );
-// router.get('/getNotifications/:patientId', getNotifications );
-// router.put('/updateNotificationStatus/:id', updateNotificationStatus );
-// router.get('/getDoctorDetailsForPatient/:doctorId',authenticateUser,getDoctorDetailsForPatient);
-// router.post('/submitReview',authenticateUser, submitReview);
-// router.get('/getReviews/:doctorId',authenticateUser,getReviews);
-// router.get('/getDoctorAverageRating/:doctorId',getDoctorAverageRating);
-// router.get('/getDoctorAverageRatingformultipleDoctors/:doctorId',getDoctorAverageRatingformultipleDoctors );
-// router.get('/getBookingDetailsforSuccessPage/:slotId',authenticateUser,getBookingDetailsforSuccessPage);
-// router.get('/getAppointmentHistory/:patientId',authenticateUser,getAppointmentHistory);
-// router.get('/getChatHistory/:doctorId/:patientId',getChatHistory);
-
-
-
-// export default router;
-
-
-
-
-
-
-
-
-
-
-
 import { Router } from 'express';
 import authenticateUser from '../middleware/authMiddleware.js'
 import {PatientController} from '../controllers/patientController.js';
@@ -102,9 +7,6 @@ import { PatientRepository } from '../repositories/patientRespository.js';
 const patientRepository = new PatientRepository();
 const patientService = new PatientService(patientRepository)
 const patientController = new PatientController(patientService);
-
-
-
 
 
 
