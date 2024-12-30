@@ -3,8 +3,8 @@ import api from '../../axios'
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
-import {AppointmentHistoryScreen} from '../../../interfaces/patientInterfaces'
-
+import { AppointmentHistoryScreen } from '../../../interfaces/patientInterfaces'
+import { Pagination } from 'react-bootstrap';
 
 const AppointmentHistory: React.FC = () => {
   const [appointments, setAppointments] = useState<AppointmentHistoryScreen[]>([]);
@@ -13,6 +13,9 @@ const AppointmentHistory: React.FC = () => {
   const patientId = user?.id;
   const navigate = useNavigate();
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const appointmentsPerPage = 5;
+
   // Fetch appointment history on component load
   useEffect(() => {
     const fetchAppointmentHistory = async () => {
@@ -20,8 +23,11 @@ const AppointmentHistory: React.FC = () => {
         const response = await api.get(
           `/patients/getAppointmentHistory/${patientId}`
         );
-        setAppointments(response.data.data);
-        (response.data.data,'histry');
+        // Sort by date descending
+        const sortedAppointments = response.data.data.sort(
+          (a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime()
+        );
+        setAppointments(sortedAppointments);
       } catch (err) {
         console.error('Error fetching appointment history:', err);
       } finally {
@@ -31,7 +37,6 @@ const AppointmentHistory: React.FC = () => {
 
     fetchAppointmentHistory();
   }, [patientId]);
-
 
   // Function to format the slot time
   const formatTime = (time: string): string => {
@@ -54,7 +59,26 @@ const AppointmentHistory: React.FC = () => {
     return `${startTime} to ${endTime}`;
   };
 
+  // Function to format the date as dd-mm-yy
+  const formatDate = (date: string): string => {
+    const d = new Date(date);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const year = d.getFullYear().toString().slice(-2); // Get last two digits of the year
+    return `${day}-${month}-${year}`;
+  };
+
   if (loading) return <p className="text-center mt-5">Loading appointment history...</p>;
+
+  const indexOfLastAppointment = currentPage * appointmentsPerPage;
+  const indexOfFirstAppointment = indexOfLastAppointment - appointmentsPerPage;
+  const currentAppointments = appointments.slice(indexOfFirstAppointment, indexOfLastAppointment);
+
+  const totalPages = Math.ceil(appointments.length / appointmentsPerPage);
+
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
 
   return (
     <div className="container mt-5">
@@ -72,15 +96,15 @@ const AppointmentHistory: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {appointments.length > 0 ? (
-            appointments.map((appointment) => (
+          {currentAppointments.length > 0 ? (
+            currentAppointments.map((appointment, index) => (
               <tr key={appointment.bookingId}>
-                <td>{appointment.index}</td>
-                <td>{appointment.date}</td>
+                <td>{indexOfFirstAppointment + index + 1}</td> {/* Adjust index based on page */}
+                <td>{formatDate(appointment.date)}</td> {/* Change date format */}
                 <td>{formatTime(appointment.slotTime)}</td>
                 <td>{appointment.doctorName}</td>
                 <td>
-                                  <button
+                  <button
                     className="btn btn-primary"
                     onClick={() =>
                       navigate('/patient/PatientPrescriptionScreen', {
@@ -103,20 +127,20 @@ const AppointmentHistory: React.FC = () => {
                   </button>
                 </td>
                 <td>
-                <button
-                  className="btn btn-secondary ml-2"
-                  onClick={() =>
-                    navigate('/patient/PatientChat', {
-                      state: {
-                        doctorId: appointment.doctorId, 
-                        patientId,                      
-                      },
-                    })
-                  }
-                >
-                  Chat with Doctor
-                </button>
-              </td>
+                  <button
+                    className="btn btn-secondary ml-2"
+                    onClick={() =>
+                      navigate('/patient/PatientChat', {
+                        state: {
+                          doctorId: appointment.doctorId,
+                          patientId,
+                        },
+                      })
+                    }
+                  >
+                    Chat with Doctor
+                  </button>
+                </td>
               </tr>
             ))
           ) : (
@@ -128,6 +152,21 @@ const AppointmentHistory: React.FC = () => {
           )}
         </tbody>
       </table>
+
+      {/* Pagination Component */}
+      {totalPages > 1 && (
+        <Pagination className="justify-content-center">
+          {Array.from({ length: totalPages }, (_, index) => (
+            <Pagination.Item
+              key={index + 1}
+              active={index + 1 === currentPage}
+              onClick={() => handlePageChange(index + 1)}
+            >
+              {index + 1}
+            </Pagination.Item>
+          ))}
+        </Pagination>
+      )}
     </div>
   );
 };
