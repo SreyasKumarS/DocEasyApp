@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Table, Button } from 'react-bootstrap';
+import { Container, Table, Button, Pagination  } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { RootState } from '../../../store';
@@ -13,6 +13,8 @@ const AppointmentsOverview: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { date } = location.state || {};
+  const [currentPage, setCurrentPage] = useState(1);
+  const appointmentsPerPage = 5;
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -35,6 +37,23 @@ const AppointmentsOverview: React.FC = () => {
     if (doctorId) fetchAppointments();
   }, [doctorId, date]);
 
+
+ // Pagination logic
+ const indexOfLastAppointment = currentPage * appointmentsPerPage;
+ const indexOfFirstAppointment = indexOfLastAppointment - appointmentsPerPage;
+ const currentAppointments = appointments.slice(
+   indexOfFirstAppointment,
+   indexOfLastAppointment
+ );
+
+ const totalPages = Math.ceil(appointments.length / appointmentsPerPage);
+
+ const handlePageChange = (pageNumber: number) => {
+   setCurrentPage(pageNumber);
+ };
+
+
+
   return (
     <Container>
       <h2>Your Appointments Overview</h2>
@@ -50,8 +69,8 @@ const AppointmentsOverview: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {appointments.length > 0 ? (
-            appointments.map((appointment) => (
+        {currentAppointments.length > 0 ? (
+            currentAppointments.map((appointment) => (
               <tr key={appointment.date}>
                 <td>{new Date(appointment.date).toLocaleDateString('en-GB')}</td>
                 <td>{appointment.totalSlots}</td>
@@ -79,6 +98,23 @@ const AppointmentsOverview: React.FC = () => {
           )}
         </tbody>
       </Table>
+
+
+      {/* Pagination Component */}
+      {totalPages > 1 && (
+        <Pagination className="justify-content-center">
+          {Array.from({ length: totalPages }, (_, index) => (
+            <Pagination.Item
+              key={index + 1}
+              active={index + 1 === currentPage}
+              onClick={() => handlePageChange(index + 1)}
+            >
+              {index + 1}
+            </Pagination.Item>
+          ))}
+        </Pagination>
+      )}
+      
     </Container>
   );
 };
