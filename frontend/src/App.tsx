@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 import Header from './components/patientComponents/Header';
 import Footer from './components/patientComponents/footer'; 
 import Headerd from './components/doctorComponent/Header';
+import Footerd from './components/doctorComponent/footer'
 import Headera from './components/adminComponent/Header';
 import './App.css';
 import { ToastContainer } from 'react-toastify';
@@ -48,6 +49,7 @@ const App: React.FC = () => {
 
  {/* Conditionally render Footer for Patient Route */}
  {isPatientRoute && <Footer />} {/* Highlighted change: render footer on patient route */}
+ {isDoctorRoute && <Footerd />} {/* Render footer for doctor route */}
 
 
 

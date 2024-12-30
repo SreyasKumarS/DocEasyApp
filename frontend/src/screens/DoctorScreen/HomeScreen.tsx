@@ -172,44 +172,6 @@ const DoctorHomeScreen: React.FC = () => {
                   </Card.Body>
                 </Card>
               </Col>
-
-              {/* Appointments Table */}
-              <Col md={12} className="mb-4">
-                <Card className="shadow-sm" style={{ borderColor: '#3A9F98' }}>
-                  <Card.Header>
-                    <h5>Appointments</h5>
-                  </Card.Header>
-                  <Card.Body>
-                    <Table striped bordered hover>
-                      <thead>
-                        <tr>
-                          <th>Patient Name</th>
-                          <th>Date & Time</th>
-                          <th>Status</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {/* Sample Data - Replace with actual appointments data */}
-                        <tr>
-                          <td>Jane Smith</td>
-                          <td>10/30/2024, 3:00 PM</td>
-                          <td><Badge bg="success">Confirmed</Badge></td>
-                        </tr>
-                        <tr>
-                          <td>Michael Brown</td>
-                          <td>11/02/2024, 11:00 AM</td>
-                          <td><Badge bg="warning">Pending</Badge></td>
-                        </tr>
-                        <tr>
-                          <td>Emily Johnson</td>
-                          <td>11/05/2024, 1:00 PM</td>
-                          <td><Badge bg="danger">Cancelled</Badge></td>
-                        </tr>
-                      </tbody>
-                    </Table>
-                  </Card.Body>
-                </Card>
-              </Col>
             </Row>
           </Container>
         </Col>

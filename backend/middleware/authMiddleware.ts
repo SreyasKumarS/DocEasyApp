@@ -6,7 +6,6 @@ interface AuthenticatedRequest extends Request {
     role?: string;
 }
 
-console.log('entered authmidlewareeeeeeeeeeeeeeeeeee');
 
 const authenticateUser = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;

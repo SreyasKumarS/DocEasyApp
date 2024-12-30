@@ -44,7 +44,6 @@ import multerS3 from 'multer-s3';
 import path from 'path';
 import dotenv from 'dotenv';
 dotenv.config();
-console.log('entered s3 multerrrrrrrrrrrrr');
 const s3 = new S3Client({
     credentials: {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID,

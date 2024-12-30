@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken';
-console.log('entered authmidlewareeeeeeeeeeeeeeeeeee');
 const authenticateUser = (req, res, next) => {
     const authHeader = req.headers.authorization;
     const token = authHeader && authHeader.split(' ')[1]; // Bearer <token>
