@@ -59,7 +59,10 @@ const PatientsScreen: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {patients.map((patient, index) => (
+        {patients
+          .slice()
+          .sort((a, b) => new Date(b.date as string).getTime() - new Date(a.date as string).getTime()) // Use `getTime` for numeric comparison
+          .map((patient, index) => (
             <tr key={patient.id}>
               <td>{index + 1}</td>
               <td>{patient.patientName}</td>
@@ -68,7 +71,13 @@ const PatientsScreen: React.FC = () => {
                 {formatTime(patient.slotStartTime)} to{' '}
                 {formatTime(patient.slotEndTime)}
               </td>
-              <td>{patient.date}</td>
+              <td>
+          {new Date(patient.date).toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: '2-digit',
+            year: '2-digit',
+          })}
+        </td>
               <td>
                 <Button
                   variant="primary"

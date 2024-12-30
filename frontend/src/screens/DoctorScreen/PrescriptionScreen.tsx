@@ -3,7 +3,7 @@ import { Container, Form, Button, Row, Col } from 'react-bootstrap';
 import api from '../../axios'
 import { useLocation, useNavigate } from 'react-router-dom';
 import {PrescriptionScreen} from '../../../interfaces/doctorInterfaces'
-
+import { toast } from 'react-toastify';
 
 const PrescriptionPage: React.FC = () => {
   const location = useLocation();
@@ -55,11 +55,11 @@ const PrescriptionPage: React.FC = () => {
       // Make an Axios POST request to the backend
       await api.post('/doctor/addPrescription', payload);
 
-      alert('Prescription submitted successfully!');
+      toast.success('Prescription submitted successfully!');
       navigate('/doctor/AppointmentsOverview'); // Navigate back to the appointments page or another desired page
     } catch (error) {
       console.error('Error submitting prescription:', error);
-      alert('Failed to submit the prescription. Please try again.');
+      toast.error('Failed to submit the prescription. Please try again.');
     }
   };
 
