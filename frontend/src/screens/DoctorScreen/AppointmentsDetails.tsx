@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import { useLocation,useNavigate } from 'react-router-dom';
 import api from '../../axios'
+import { toast } from 'react-toastify';
 
 
 const AppointmentsDetails: React.FC = () => {
@@ -138,7 +139,7 @@ const AppointmentsDetails: React.FC = () => {
   const handlePrescriptionClick = (slotId: string) => {
     const patient = patientDetails[slotId]; // Retrieve patient details for the selected slot
     if (!patient || !patient.patientId) {
-      alert("Patient details not found for the selected slot.");
+      toast.error("Patient booking already completed, visit my patients.");
       return;
     }
   
