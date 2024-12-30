@@ -20,9 +20,7 @@ const DoctorHomeScreen: React.FC = () => {
     const fetchDoctorProfile = async () => {
       if (doctorId) {
         try {
-          const response = await api.get(`/doctor/fetchDoctorById/${doctorId}`);
-          console.log(response.data,'imgggggggggggggggggggggggggggggggg');
-          
+          const response = await api.get(`/doctor/fetchDoctorById/${doctorId}`);   
           setDoctorProfile(response.data); 
         } catch (error) {
           console.error('Error fetching doctor profile:', error);
@@ -68,11 +66,10 @@ const DoctorHomeScreen: React.FC = () => {
         <Col md={2} className="sidebar shadow p-3 rounded" style={{ backgroundColor: '#3D6F95', color: '#ffffff', width: '180px' }}>
           <h5 className="text-center mb-4">Doctor Portal</h5>
           <Nav className="flex-column">
-            <Nav.Link onClick={() => navigateTo('/doctor/overview')} className="text-white">Overview</Nav.Link>
-            <Nav.Link onClick={() => navigateTo('/doctor/appointments')} className="text-white">Appointments</Nav.Link>
+            <Nav.Link onClick={() => navigateTo('/doctor/DoctorHomeScreen')} className="text-white">Overview</Nav.Link>
+            <Nav.Link onClick={() => navigateTo('/doctor/AppointmentsOverview')} className="text-white">Appointments</Nav.Link>
             <Nav.Link onClick={() => navigateTo('/doctor/MyPatientsScreen')} className="text-white">My Patients</Nav.Link>
             <Nav.Link onClick={() => navigateTo('/doctor/DoctorProfileDocside')} className="text-white">Profile</Nav.Link>
-            <Nav.Link onClick={() => navigateTo('/doctor/settings')} className="text-white">Settings</Nav.Link>
           </Nav>
         </Col>
 
@@ -83,43 +80,58 @@ const DoctorHomeScreen: React.FC = () => {
             <Row>
               {/* Profile Card */}
               <Col md={12} className="mb-4">
-                <Card className="shadow-sm" style={{ borderColor: '#3A9F98' }}>
-                  <Card.Body>
-                    <Row>
-                      <Col md={3} className="text-center">
-                        <img
-                          src={doctorProfile?.profilePicture} // This should be the S3 URL
-                          alt={`${doctorProfile?.name}'s Profile`}
-                          className="img-fluid shadow-sm mb-4"
-                          style={{ width: '150px', height: '150px', objectFit: 'cover' }}
-                        />
-                      </Col>
-                      <Col md={9}>
-                        <h5>{doctorProfile?.name}</h5>
-                        <p><strong>Specialization:</strong> {doctorProfile?.specialization || 'N/A'}</p>
-                        <p><strong>Contact:</strong> {doctorProfile?.email || 'N/A'}</p>
-                        <p><strong>Clinic Address:</strong> {doctorProfile?.clinicAddress || 'N/A'}</p>
-                        <p><strong>Bio:</strong> {doctorProfile?.biography || 'N/A'}</p>
-                        {averageRating !== null && (
-                            <div>
-                              <p>
-                                <strong>Average Rating:</strong> {averageRating.toFixed(1)}
-                              </p>
-                              <ReactStars
-                                count={5}
-                                size={24}
-                                value={averageRating}
-                                edit={false}
-                                isHalf={true}
-                                activeColor="#ffd700"
-                              />
-                            </div>
-                          )}  
-                      </Col>
-                    </Row>
-                  </Card.Body>
-                </Card>
-              </Col>
+      <Card className="shadow-lg rounded" style={{ borderColor: '#3A9F98', transition: 'transform 0.3s ease' }}>
+        <Card.Body>
+          <Row className="align-items-center">
+            {/* Image Column */}
+            <Col md={4} className="text-center mb-4 mb-md-0">
+              <img
+                src={doctorProfile?.profilePicture} // This should be the S3 URL
+                alt={`${doctorProfile?.name}'s Profile`}
+                className="img-fluid rounded-circle shadow-sm mb-3"
+                style={{ width: '150px', height: '150px', objectFit: 'cover', border: '3px solid #3A9F98' }}
+              />
+            </Col>
+
+            {/* Details Column */}
+            <Col md={8}>
+              <h5 className="mb-2" style={{ fontSize: '1.5rem', fontWeight: '600', color: '#333' }}>
+                {doctorProfile?.name}
+              </h5>
+              <p className="text-muted" style={{ fontSize: '1rem', fontWeight: '500' }}>
+                <strong>Specialization:</strong> {doctorProfile?.specialization || 'N/A'}
+              </p>
+              <p className="text-muted" style={{ fontSize: '1rem', fontWeight: '500' }}>
+                <strong>Contact:</strong> {doctorProfile?.email || 'N/A'}
+              </p>
+              <p className="text-muted" style={{ fontSize: '1rem', fontWeight: '500' }}>
+                <strong>Clinic Address:</strong> {doctorProfile?.clinicAddress || 'N/A'}
+              </p>
+              <p className="text-muted" style={{ fontSize: '1rem', fontWeight: '500' }}>
+                <strong>Bio:</strong> {doctorProfile?.biography || 'N/A'}
+              </p>
+
+              {/* Rating Section */}
+              {averageRating !== null && (
+                <div className="mt-3">
+                  <p className="text-muted" style={{ fontSize: '1rem', fontWeight: '500' }}>
+                    <strong>Average Rating:</strong> {averageRating.toFixed(1)}
+                  </p>
+                  <ReactStars
+                    count={5}
+                    size={24}
+                    value={averageRating}
+                    edit={false}
+                    isHalf={true}
+                    activeColor="#ffd700"
+                  />
+                </div>
+              )}
+            </Col>
+          </Row>
+        </Card.Body>
+      </Card>
+    </Col>
               {/* Dashboard Quick Links */}
               <Col md={6} className="mb-4">
                 <Card className="shadow-sm card-hover" style={{ background: 'linear-gradient(135deg, #5B9BD5, #4A77B6)', color: '#fff' }}>
