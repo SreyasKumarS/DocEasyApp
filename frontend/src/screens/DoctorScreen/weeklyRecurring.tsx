@@ -6,6 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const WeeklyRecurringSlots = () => {
   const [startDate, setStartDate] = useState<Date>(new Date());
@@ -88,7 +89,7 @@ const WeeklyRecurringSlots = () => {
       navigate('/doctor/DoctorSlotsDisplay');
     } catch (error) {
       console.error('Error creating slots:', error);
-      alert('Failed to create slots');
+      toast.error('Failed to create slots');
     }
   };
   

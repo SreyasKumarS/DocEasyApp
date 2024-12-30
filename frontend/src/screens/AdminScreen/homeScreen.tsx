@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Container, Row, Col, Card, Button, Nav, Modal, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { FaUserMd, FaUsers, FaCog, FaDollarSign,FaChartBar,FaFileAlt,FaTable } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 import api from '../../axios'
 
 
@@ -51,12 +52,12 @@ const AdminHomeScreen: React.FC = () => {
       );
   
       if (response.status === 200) {
-        alert('Platform Fee updated successfully!');
+        toast.success('Platform Fee updated successfully!');
         handleClose();
       }
     } catch (error) {
       console.error('Error updating platform fee:', error);
-      alert('Failed to update platform fee. Please try again.');
+      toast.error('Failed to update platform fee. Please try again.');
     }
   };
   

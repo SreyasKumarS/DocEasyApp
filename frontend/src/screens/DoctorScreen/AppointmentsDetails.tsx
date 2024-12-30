@@ -127,7 +127,7 @@ const AppointmentsDetails: React.FC = () => {
         )
       );
 
-      alert('Appointment canceled successfully.');
+      toast.success('Appointment canceled successfully.');
       setShowCancellationModal(false); // Hide modal after cancellation
     } catch (error) {
       console.error('Error canceling appointment:', error);
