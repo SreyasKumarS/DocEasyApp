@@ -55,30 +55,20 @@ const DoctorHomeScreen: React.FC = () => {
   }
 
   return (
-    <Container fluid className="p-4 doctor-dashboard" style={{ 
-      backgroundImage: `url('https://example.com/background-image.jpg')`, 
-      backgroundSize: 'cover', 
-      backgroundPosition: 'center',
-      minHeight: '100vh'
-    }}>
-      <Row>
-        {/* Sidebar */}
-        <Col md={2} className="sidebar shadow p-3 rounded" style={{ backgroundColor: '#3D6F95', color: '#ffffff', width: '180px' }}>
-          <h5 className="text-center mb-4">Doctor Portal</h5>
-          <Nav className="flex-column">
-            <Nav.Link onClick={() => navigateTo('/doctor/DoctorHomeScreen')} className="text-white">Overview</Nav.Link>
-            <Nav.Link onClick={() => navigateTo('/doctor/AppointmentsOverview')} className="text-white">Appointments</Nav.Link>
-            <Nav.Link onClick={() => navigateTo('/doctor/MyPatientsScreen')} className="text-white">My Patients</Nav.Link>
-            <Nav.Link onClick={() => navigateTo('/doctor/DoctorProfileDocside')} className="text-white">Profile</Nav.Link>
-          </Nav>
-        </Col>
-
-        {/* Main Content */}
-
-        
-        <Col md={10}>
-{/* Separate Container for DocEasy Description Section */}
-{/* Separate Container for DocEasy Description Section */}
+<Container 
+  fluid 
+  className="p-4 doctor-dashboard" 
+  style={{ 
+    backgroundImage: `url('https://example.com/background-image.jpg')`, 
+    backgroundSize: 'cover', 
+    backgroundPosition: 'center',
+    minHeight: '100vh',
+    paddingLeft: '2rem', // Add padding to align content
+    paddingRight: '2rem' 
+  }}
+>
+  <Row className="justify-content-center"> {/* Center align Row */}
+    <Col md={10} className="mx-auto"> {/* Centered Col */}
 <Container fluid className="py-5">
   <Container>
     {/* Image as Banner */}
@@ -105,7 +95,7 @@ const DoctorHomeScreen: React.FC = () => {
         <div>
           <h2 className="text-center mb-3" style={{ color: '#3A9F98' }}>About DocEasy</h2> {/* Teal title for a fresh look */}
           <p style={{ fontSize: '1.1rem', lineHeight: '1.8', textAlign: 'justify', color: '#2c2c2c' }}>
-            At <strong style={{ color: '#000' }}>DocEasy</strong>, we aim to simplify healthcare by connecting patients with 
+            At DocEasy, we aim to simplify healthcare by connecting patients with 
             experienced doctors. Whether it's scheduling appointments, managing career slots, or 
             accessing specialized care, we ensure convenience and ease for both patients and doctors. 
             Join us to experience seamless healthcare management!
@@ -117,7 +107,7 @@ const DoctorHomeScreen: React.FC = () => {
 </Container>
           <Container>
           <h1 className="mb-4 text-center" style={{ color: '#3A9F98', fontWeight: 'bold' }}>
-    Welcome, Dr. {doctorProfile?.name}
+    Welcome Dr. {doctorProfile?.name}
   </h1>
             <Row>
               {/* Profile Card */}

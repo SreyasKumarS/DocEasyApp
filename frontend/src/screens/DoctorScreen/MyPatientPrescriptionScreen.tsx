@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import api from '../../axios'
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
 import {MyPatientPrescriptionScreen} from '../../../interfaces/doctorInterfaces'
-
+import { FaUser, FaPhone, FaClock, FaCalendarAlt, FaNotesMedical, FaPills } from 'react-icons/fa';
 
 const ViewPrescription = () => {
   const location = useLocation();
@@ -56,83 +56,120 @@ const ViewPrescription = () => {
   if (loading) return <p className="text-center mt-5">Loading prescription details...</p>;
   if (error) return <p className="text-center text-danger mt-5">{error}</p>;
 
-  return (
-    <div className="container mt-5">
-      <div className="card shadow p-4">
-        <h1 className="text-center text-primary mb-4">Prescription Details</h1>
 
+  const formatTime = (time: string): string => {
+    const date = new Date(time);
+    return new Intl.DateTimeFormat('en-US', {
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true,
+    }).format(date);
+  };
+  
+  
+
+  return (
+
+  
+
+    <div className="container my-5">
+      <div className="card shadow-lg p-5 border-0" style={{ borderRadius: '10px' }}>
+        <h1 className="text-center text-primary mb-5" style={{ fontWeight: 'bold', fontSize: '2.5rem' }}>
+          Prescription Details
+        </h1>
+    
         {/* Display Patient Details */}
-        <div className="mb-3">
-          <h5 className="text-secondary">Patient Details:</h5>
-          <p className="fs-5">
+        <div className="mb-4">
+          <h5 className="text-secondary" style={{ fontWeight: '600', fontSize: '1.2rem' }}>
+            <FaUser className="me-2 text-primary" /> Patient Details
+          </h5>
+          <p className="mb-2">
+            <FaUser className="me-2 text-secondary" />
             <strong>Name:</strong> {patientName}
           </p>
-          <p className="fs-5">
+          <p className="mb-2">
+            <FaPhone className="me-2 text-secondary" />
             <strong>Contact Number:</strong> {contactNumber}
           </p>
-          <p className="fs-5">
-            <strong>Slot Time:</strong> {slotStartTime} to {slotEndTime}
+          <p className="mb-2">
+            <FaClock className="me-2 text-secondary" />
+            <strong>Slot Time:</strong> {formatTime(slotStartTime)} to {formatTime(slotEndTime)}
           </p>
-          <p className="fs-5">
+          <p>
+            <FaCalendarAlt className="me-2 text-secondary" />
             <strong>Date:</strong> {date}
           </p>
         </div>
-
-        <hr />
-
+    
+        <hr className="mb-5" />
+    
         {/* Display Prescription Details */}
         {prescription ? (
           <>
-            <div className="mb-3">
-              <h5 className="text-secondary">Diagnosis:</h5>
-              <p className="fs-5">{prescription.diagnosis}</p>
+            <div className="mb-4">
+              <h5 className="text-secondary" style={{ fontWeight: '600', fontSize: '1.2rem' }}>
+                <FaNotesMedical className="me-2 text-primary" /> Diagnosis
+              </h5>
+              <p style={{ fontSize: '1.1rem' }}>{prescription.diagnosis}</p>
             </div>
-
-            <div className="mb-3">
-              <h5 className="text-secondary">Medications:</h5>
+    
+            <div className="mb-4">
+              <h5 className="text-secondary" style={{ fontWeight: '600', fontSize: '1.2rem' }}>
+                <FaPills className="me-2 text-primary" /> Medications
+              </h5>
               <ul className="list-group">
                 {prescription.medications?.length > 0 ? (
                   prescription.medications.map((med, index) => (
-                    <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
-                      <span>
-                        <strong>Name:</strong> {med.name}
-                      </span>
-                      <span>
-                        <strong>Dosage:</strong> {med.dosage}
-                      </span>
-                      <span>
-                        <strong>Duration:</strong> {med.duration}
-                      </span>
+                    <li
+                      key={index}
+                      className="list-group-item d-flex justify-content-between align-items-center"
+                      style={{ borderRadius: '8px', backgroundColor: '#f9f9f9', marginBottom: '10px' }}
+                    >
+                      <span><strong>Name:</strong> {med.name}</span>
+                      <span><strong>Dosage:</strong> {med.dosage}</span>
+                      <span><strong>Duration:</strong> {med.duration}</span>
                     </li>
                   ))
                 ) : (
-                  <p>No medications prescribed.</p>
+                  <p className="text-muted">No medications prescribed.</p>
                 )}
               </ul>
             </div>
-
-            <div className="mb-3">
-              <h5 className="text-secondary">Additional Notes:</h5>
-              <p className="fs-5">{prescription.additionalNotes}</p>
+    
+            <div className="mb-4">
+              <h5 className="text-secondary" style={{ fontWeight: '600', fontSize: '1.2rem' }}>
+                <FaNotesMedical className="me-2 text-primary" /> Additional Notes
+              </h5>
+              <p style={{ fontSize: '1.1rem' }}>{prescription.additionalNotes}</p>
             </div>
           </>
         ) : (
-          <p className="text-center">No prescription data available.</p>
+          <p className="text-center text-muted" style={{ fontSize: '1.2rem' }}>
+            No prescription data available.
+          </p>
         )}
+    
+        <hr className="mt-4 mb-5" />
+      {/* </div>
+    </div> */}
+    
 
-        <hr />
-        <footer className="text-center">
-          <p className="mb-2">
-            <strong>Doceasy</strong> - Health is Our Priority
-          </p>
-          <p className="small text-muted">
-            Thank you for choosing Doceasy! We value your trust. <br />
-            For support, contact us at: <a href="mailto:support@doceasy.com">support@doceasy.com</a>
-          </p>
-          <p className="small text-muted">© 2024 Doceasy. All rights reserved</p>
-        </footer>
-      </div>
-    </div>
+    {/* Footer */}
+    <footer className="text-center">
+      <p className="mb-3" style={{ fontWeight: '600', fontSize: '1rem', color: '#3A9F98' }}>
+        <strong>DocEasy</strong> - Health is Our Priority
+      </p>
+      <p className="small text-muted mb-2">
+        Thank you for choosing DocEasy! We value your trust. <br />
+        For support, contact us at: <a href="mailto:support@doceasy.com" className="text-primary">support@doceasy.com</a>
+      </p>
+      <p className="small text-muted">
+        &copy; 2024 DocEasy. All rights reserved.
+      </p>
+    </footer>
+  </div>
+</div>
+
   );
 };
 
